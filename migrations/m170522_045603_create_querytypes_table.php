@@ -10,14 +10,14 @@ class m170522_045603_create_querytypes_table extends Migration
 
     public function up()
     {
-        $this->createTable('querytypes', [
+        $this->createTable('query_types', [
             'id' => $this->primaryKey(),
-            'querytype' => 'char',
+            'query_type' => 'char(10)',
         ]);
     }
 
     public function down()
     {
-        $this->dropTable('querytypes');
+        $this->dropTable('query_types');
     }
 }

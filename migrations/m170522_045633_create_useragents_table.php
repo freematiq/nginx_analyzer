@@ -10,14 +10,14 @@ class m170522_045633_create_useragents_table extends Migration
 
     public function up()
     {
-        $this->createTable('useragents', [
+        $this->createTable('user_agents', [
             'id' => $this->primaryKey(),
-            'browserinfo' => 'varchar(256)',
+            'browser_info' => 'varchar(256)',
         ]);
     }
 
     public function down()
     {
-        $this->dropTable('useragents');
+        $this->dropTable('user_agents');
     }
 }
