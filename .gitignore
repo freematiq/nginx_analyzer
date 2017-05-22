@@ -2,13 +2,10 @@
 .idea
 
 # db ignore
-<<<<<<< HEAD
+
 confif/db.php
 config/test_db.php
-=======
-/confif/db.php
-/config/test_db.php
->>>>>>> a174bfa2dcffe87ddb21497c09bf837d08beb7ab
+
 
 # netbeans project files
 nbproject
