@@ -1,11 +1,14 @@
 # phpstorm project files
 .idea
-/.idea
+.idea/workspace.xml
 
 # db ignore
 
 config/db.php
 config/test_db.php
+
+db.php
+test_db.php
 
 
 # netbeans project files
