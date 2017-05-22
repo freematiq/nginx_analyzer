@@ -2,8 +2,8 @@
 .idea
 
 # db ignore
-/confif/db.php
-/config/test_db.php
+confif/db.php
+config/test_db.php
 
 # netbeans project files
 nbproject
