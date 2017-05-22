@@ -1,9 +1,10 @@
 # phpstorm project files
 .idea
+/.idea
 
 # db ignore
 
-confif/db.php
+config/db.php
 config/test_db.php
 
 
