@@ -1,0 +1,8 @@
+<?php
+return [
+    'class' => 'yii\db\Connection',
+    'dsn' => 'pgsql:host=yourhost;port=yourpost;dbname=yourdbname',
+    'username' => 'your username',
+    'password' => 'your password',
+    'charset' => 'utf8',
+];
