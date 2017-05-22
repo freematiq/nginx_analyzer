@@ -13,10 +13,11 @@ class m170522_050221_create_uploadhistory_table extends Migration
     public function up()
     {
         $this->createTable('upload_history', [
-            'id' => $this->primaryKey(),
+            'filename_id' => $this->primaryKey(),
             'filename' => 'varchar(256)',
             'date' => 'timestamp(0) with time zone default now() not null',
         ]);
+
     }
 
     /**

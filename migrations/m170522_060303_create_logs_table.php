@@ -24,30 +24,30 @@ class m170522_060303_create_logs_table extends Migration
         ]);
 
         $this->addForeignKey(
-            'fk-browser_info',
+            'fk_browser_info',
             'logs',
             'browser_info',
             'user_agents',
-            'id',
+            'user_agent_id',
             'CASCADE'
         );
 
         $this->addForeignKey(
-            'fk-query_type',
+            'fk_query_type',
             'logs',
             'query_type',
             'query_types',
-            'id',
+            'query_type_id',
             'CASCADE'
         );
 
 
         $this->addForeignKey(
-            'fk-uploaded_history',
+            'fk_uploaded_history',
             'logs',
             'uploaded_file',
             'upload_history',
-            'id',
+            'filename_id',
             'CASCADE'
         );
     }
@@ -57,17 +57,17 @@ class m170522_060303_create_logs_table extends Migration
         $this->dropTable('logs');
 
         $this->dropForeignKey(
-            'fk-query_type',
+            'fk_query_type',
             'logs'
         );
 
         $this->dropForeignKey(
-            'fk-browser_info',
+            'fk_browser_info',
             'logs'
         );
 
         $this->dropForeignKey(
-            'fk-uploaded_history',
+            'fk_uploaded_history',
             'logs'
         );
     }
