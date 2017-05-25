@@ -111,19 +111,22 @@ class Logs extends \yii\db\ActiveRecord
         return $this->hasOne(UserAgents::className(), ['user_agent_id' => 'browser_info']);
     }
 
-    public function indexFile ()
-    {
-        return 0;
-    }
 
-    public function logUpload()
+    public function indexFile($path)
+        /*This method imports data from file into array $rows deleting
+        empty last cell of array*/
     {
-        $file = file_get_contents("/home/jaroslav/nginx_analyzer/log.txt");
+        $file = file_get_contents($path);
         $rows = explode("\n", $file);
         array_pop($rows);
+        return $rows;
+    }
 
+    public function logUpload($rows)
+        /*This method inserts data from incoming array into DB*/
+    {
         $filename = new UploadHistory();
-        $filename->filename = 'log.txt';
+        $filename->filename = '.txt';
         $filename->save();
 
         foreach ($rows as $row => $data) {

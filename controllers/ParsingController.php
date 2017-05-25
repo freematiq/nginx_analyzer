@@ -51,12 +51,15 @@ class ParsingController extends Controller
     public function actionIndex()
     {
         $model = new Logs();
+        $filename = new UploadHistory();
+        //$path = "/home/jaroslav/nginx_analyzer/log.txt";
 
         if (Yii::$app->request->isPost) {
             $model->file = UploadedFile::getInstance($model, 'file');
             if ($model->file && $model->validate()) {
-                $model->file->saveAs('/home/jaroslav/basic/web/uploads' . $model->file->baseName . '.' . $model->file->extension);
-                $model->logUpload();
+                $model->file->saveAs($model->file);
+                $rows = $model->indexFile($model->file);
+                $model->logUpload($rows);
             }
         }
 
