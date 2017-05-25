@@ -1,7 +1,5 @@
 <?php
 
-/* @var $this yii\web\View */
-
 $this->title = 'My Yii Application';
 ?>
 <div class="site-index">
@@ -18,7 +16,7 @@ $this->title = 'My Yii Application';
 
     foreach ($rows as $row => $data) {
         preg_match_all('/"(?:\\\\.|[^\\\\"])*"|\S+/', $data, $matches);
-        print_r($matches[0]);
+        //print_r($matches[0]);
         $string = $matches[0][5];
         $string = str_replace('"', '', $string);
         $row_data1 = explode(' ', $string);

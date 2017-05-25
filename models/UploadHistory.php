@@ -7,7 +7,7 @@ use Yii;
 /**
  * This is the model class for table "upload_history".
  *
- * @property integer $id
+ * @property integer $filename_id
  * @property string $filename
  * @property string $date
  *
@@ -15,12 +15,17 @@ use Yii;
  */
 class UploadHistory extends \yii\db\ActiveRecord
 {
-
+    /**
+     * @inheritdoc
+     */
     public static function tableName()
     {
         return 'upload_history';
     }
 
+    /**
+     * @inheritdoc
+     */
     public function rules()
     {
         return [
@@ -29,17 +34,24 @@ class UploadHistory extends \yii\db\ActiveRecord
         ];
     }
 
+    /**
+     * @inheritdoc
+     */
     public function attributeLabels()
     {
         return [
-            'id' => 'ID',
+            'filename_id' => 'Filename ID',
             'filename' => 'Filename',
             'date' => 'Date',
         ];
     }
 
+    /**
+     * @return \yii\db\ActiveQuery
+     */
     public function getLogs()
     {
-        return $this->hasMany(Logs::className(), ['uploaded_file' => 'id']);
+        return $this->hasMany(Logs::className(), ['uploaded_file' => 'filename_id']);
     }
+
 }

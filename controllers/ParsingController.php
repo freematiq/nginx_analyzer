@@ -1,32 +1,66 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: jaroslav
- * Date: 22.05.17
- * Time: 15:54
- */
 
 namespace app\controllers;
 
+use app\models\Logs;
+use app\models\UploadHistory;
+use Yii;
+use yii\filters\AccessControl;
+use yii\web\Controller;
+use yii\filters\VerbFilter;
+use app\models\LoginForm;
+use app\models\ContactForm;
+use app\models\UploadForm;
+use yii\web\UploadedFile;
 
-use app\commands\ParseController;
-
-class ParsingController extends ParseController
+class ParsingController extends Controller
 {
 
-    public function actionRowcreator(){
+    public function behaviors()
+    {
+        return [
+            'access' => [
+                'class' => AccessControl::className(),
+                'only' => ['logout'],
+                'rules' => [
+                    [
+                        'actions' => ['logout'],
+                        'allow' => true,
+                        'roles' => ['@'],
+                    ],
+                ],
+            ],
+            'verbs' => [
+                'class' => VerbFilter::className(),
+            ],
+        ];
+    }
 
-        $file = file("log.txt");
-        $mass = [];
-        array_map(function($v) use (&$mass){
-            $exp = explode(";",$v);
-            $mass[] = [$exp[0],"phone" =>$exp[1]];
-        },$file);
+    /**
+     * @inheritdoc
+     */
+    public function actions()
+    {
+        return [
+            'error' => [
+                'class' => 'yii\web\ErrorAction',
+            ],
+        ];
+    }
 
-        $element = 1;
-        $param1 = $mass[$element-1]['phone'];
-        echo $param1;
+    public function actionIndex()
+    {
+        $model = new Logs();
 
+        if (Yii::$app->request->isPost) {
+            $model->file = UploadedFile::getInstance($model, 'file');
+            if ($model->file && $model->validate()) {
+                $model->file->saveAs('/home/jaroslav/basic/web/uploads' . $model->file->baseName . '.' . $model->file->extension);
+                $model->logUpload();
+            }
+        }
+
+        return $this->render('index', ['model' => $model]);
     }
 
 }

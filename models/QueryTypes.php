@@ -7,7 +7,7 @@ use Yii;
 /**
  * This is the model class for table "query_types".
  *
- * @property integer $id
+ * @property integer $query_type_id
  * @property string $query_type
  *
  * @property Logs[] $logs
@@ -29,6 +29,7 @@ class QueryTypes extends \yii\db\ActiveRecord
     {
         return [
             [['query_type'], 'string', 'max' => 10],
+            [['query_type'], 'unique'],
         ];
     }
 
@@ -38,7 +39,7 @@ class QueryTypes extends \yii\db\ActiveRecord
     public function attributeLabels()
     {
         return [
-            'id' => 'ID',
+            'query_type_id' => 'Query Type ID',
             'query_type' => 'Query Type',
         ];
     }
@@ -48,6 +49,6 @@ class QueryTypes extends \yii\db\ActiveRecord
      */
     public function getLogs()
     {
-        return $this->hasMany(Logs::className(), ['query_type' => 'id']);
+        return $this->hasMany(Logs::className(), ['query_type' => 'query_type_id']);
     }
 }
