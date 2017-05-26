@@ -1,9 +1,8 @@
 <?php
 use yii\widgets\ActiveForm;
-
 $this->title = 'Upload';
 ?>
-<div class="site-index">
+    <div class="site-index">
 
     <div class="jumbotron">
         <h1>upload file</h1>
@@ -14,6 +13,4 @@ $this->title = 'Upload';
     <?= $form->field($model, 'file')->fileInput() ?>
 
     <button type="submit" onclick="this.disabled = true; this.innerHTML='parsing process'">Parse</button>
-    <?php ActiveForm::end() ?>
-
-</div>
+<?php ActiveForm::end() ?>

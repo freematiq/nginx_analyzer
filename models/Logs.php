@@ -112,9 +112,9 @@ class Logs extends \yii\db\ActiveRecord
     }
 
 
+    /*This method imports data from file into array $rows deleting
+       empty last cell of array*/
     public function indexFile($path)
-        /*This method imports data from file into array $rows deleting
-        empty last cell of array*/
     {
         $file = file_get_contents($path);
         $rows = explode("\n", $file);
@@ -122,8 +122,8 @@ class Logs extends \yii\db\ActiveRecord
         return $rows;
     }
 
-    public function logUpload($rows, $path)
-        /*This method inserts data from incoming array into DB*/
+    /*This method inserts data from incoming array into DB through UploadFile*/
+    public function logUpload($rows, $file_id)
     {
 
         foreach ($rows as $row => $data) {
@@ -158,10 +158,57 @@ class Logs extends \yii\db\ActiveRecord
             $logs->query_time_numeric = $row_data[0][8];
             $logs->quested_page = str_replace('"', '', $row_data[0][9]);
             $logs->user_ip = str_replace('"', '', $row_data[0][11]);
-            $logs->uploaded_file = $path;
+            $logs->uploaded_file = $file_id;
             $logs->browser_info = $useragents->user_agent_id;
             $logs->save();
         }
-    return 0;
+        return 0;
+    }
+
+    /*This method inserts data from incoming array into DB through console*/
+    public function logUploadThroughConsole($rows, $filename)
+    {
+
+        $uploadedfile = new UploadHistory();
+        $uploadedfile->filename = $filename;
+        $uploadedfile->save();
+
+        foreach ($rows as $row => $data) {
+            preg_match_all('/"(?:\\\\.|[^\\\\"])*"|\S+/', $data, $matches);
+            $string = $matches[0][5];
+            $string = str_replace('"', '', $string);
+            $row_data1 = explode(' ', $string);
+            $row_data = $matches;
+
+            $types = QueryTypes::find()->where(['query_type' => $row_data1[0]])->one();
+            if (is_null($types)) {
+                $types = new QueryTypes();
+                $types->query_type = $row_data1[0];
+                $types->save();
+            }
+
+            $useragents = UserAgents::find()->where(['browser_info' => str_replace('"', '', $row_data[0][10])])->one();
+            if (is_null($useragents)) {
+                $useragents = new UserAgents();
+                $useragents->browser_info = str_replace('"', '', $row_data[0][10]);
+                $useragents->save();
+            }
+
+            $logs = new Logs();
+            $logs->query_type = $types->query_type_id;
+            $logs->sip = $row_data[0][0];
+            $logs->query_date = str_replace('[', '', $row_data[0][3]) . str_replace(']', '', $row_data[0][4]);
+            $logs->url_query = $row_data1[1];
+            $logs->query_code = $row_data[0][6];
+            $logs->query_size = $row_data[0][7];
+            $logs->query_time_float = $row_data[0][8];
+            $logs->query_time_numeric = $row_data[0][8];
+            $logs->quested_page = str_replace('"', '', $row_data[0][9]);
+            $logs->user_ip = str_replace('"', '', $row_data[0][11]);
+            $logs->uploaded_file = $uploadedfile->filename_id;
+            $logs->browser_info = $useragents->user_agent_id;
+            $logs->save();
+        }
+        return 0;
     }
 }
