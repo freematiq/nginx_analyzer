@@ -52,14 +52,16 @@ class ParsingController extends Controller
     {
         $model = new Logs();
         $filename = new UploadHistory();
-        //$path = "/home/jaroslav/nginx_analyzer/log.txt";
 
         if (Yii::$app->request->isPost) {
             $model->file = UploadedFile::getInstance($model, 'file');
             if ($model->file && $model->validate()) {
                 $model->file->saveAs($model->file);
+                $filename->filename = $model->file->name;
+                $filename->save();
+                $path = $filename->filename_id;
                 $rows = $model->indexFile($model->file);
-                $model->logUpload($rows);
+                $model->logUpload($rows, $path);
             }
         }
 

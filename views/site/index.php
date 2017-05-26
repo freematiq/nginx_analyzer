@@ -10,7 +10,7 @@ $this->title = 'My Yii Application';
 
 
     <?php
-    $file = file_get_contents("/home/jaroslav/nginx_analyzer/log.txt");
+/*    $file = file_get_contents("/home/jaroslav/nginx_analyzer/log.txt");
     $rows = explode("\n", $file);
     array_pop($rows);
 
@@ -42,11 +42,11 @@ $this->title = 'My Yii Application';
         echo $row . ')' . ' query_time: ' . $logs[$row]['query_time'] . '<br />';
         echo $row . ')' . ' quested_page: ' . $logs[$row]['quested_page'] . '<br />';
         echo $row . ')' . ' browser_info: ' . $logs[$row]['browser_info'] . '<br />';
-        echo $row . ')' . ' user_ip: ' . $logs[$row]['user_ip'] . '<br />';
+        echo $row . ')' . ' user_ip: ' . $logs[$row]['user_ip'] . '<br />';}*/
 
 
-        echo '<br />';
-    } ?>
+
+     ?>
 
 
 </div>

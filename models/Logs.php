@@ -122,12 +122,9 @@ class Logs extends \yii\db\ActiveRecord
         return $rows;
     }
 
-    public function logUpload($rows)
+    public function logUpload($rows, $path)
         /*This method inserts data from incoming array into DB*/
     {
-        $filename = new UploadHistory();
-        $filename->filename = '.txt';
-        $filename->save();
 
         foreach ($rows as $row => $data) {
             preg_match_all('/"(?:\\\\.|[^\\\\"])*"|\S+/', $data, $matches);
@@ -161,10 +158,10 @@ class Logs extends \yii\db\ActiveRecord
             $logs->query_time_numeric = $row_data[0][8];
             $logs->quested_page = str_replace('"', '', $row_data[0][9]);
             $logs->user_ip = str_replace('"', '', $row_data[0][11]);
-            $logs->uploaded_file = $filename->filename_id;
+            $logs->uploaded_file = $path;
             $logs->browser_info = $useragents->user_agent_id;
             $logs->save();
         }
-
+    return 0;
     }
 }
