@@ -34,8 +34,9 @@ AppAsset::register($this);
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav navbar-right'],
         'items' => [
-            ['label' => 'Home', 'url' => ['/site/index']],
-          ['label' => 'File', 'url' => ['/parsing/index']],
+            //   ['label' => 'Home', 'url' => ['/site/index']],
+            ['label' => 'Парсер логов', 'url' => ['/parsing/index']],
+            ['label' => 'Графики', 'url' => ['/parsing/plot']],
         ],
     ]);
     NavBar::end();

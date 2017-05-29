@@ -2,10 +2,6 @@
 
 namespace app\models;
 
-use Yii;
-use yii\db\Query;
-use yii\db\QueryBuilder;
-use yii\helpers\ArrayHelper;
 use yii\web\UploadedFile;
 
 /**

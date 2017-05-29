@@ -2,6 +2,7 @@
 
 namespace app\controllers;
 
+use app\models\Logs;
 use app\models\UploadHistory;
 use app\services\LogParser;
 use Yii;
@@ -47,8 +48,9 @@ class ParsingController extends Controller
 
     public function actionIndex()
     {
-        $model = new LogParser();
+        $model = new Logs();
         $filename = new UploadHistory();
+        $service = new LogParser();
 
         if (Yii::$app->request->isPost) {
             $model->file = UploadedFile::getInstance($model, 'file');
@@ -57,12 +59,18 @@ class ParsingController extends Controller
                 $filename->filename = $model->file->name;
                 $filename->save();
                 $path = $filename->filename_id;
-                $rows = $model->indexFile($model->file);
-                $model->logUpload($rows, $path);
+                $rows = $service->indexFile($model->file);
+                $service->logUpload($rows, $path);
             }
+            return $this->redirect(\Yii::$app->urlManager->createUrl("parsing/index"));
         }
 
         return $this->render('index', ['model' => $model]);
+    }
+
+    public function actionPlot()
+    {
+        return $this->render('plot');
     }
 
 }

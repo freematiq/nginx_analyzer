@@ -6,29 +6,15 @@ use app\models\Logs;
 use app\models\QueryTypes;
 use app\models\UploadHistory;
 use app\models\UserAgents;
-use yii\db\ActiveRecord;
-use yii\web\UploadedFile;
+use Yii;
 
 /**
  * Class LogParser
  * @package app\services
  * @property LogParser $parser The parser component. This property is read-only.
  */
-class LogParser extends ActiveRecord
+class LogParser
 {
-    /**
-     * @var UploadedFile file attribute
-     */
-    public $file;
-
-    /**
-     * @inheritdoc
-     */
-    public static function tableName()
-    {
-        return 'logs';
-    }
-
     /**
      * This method imports data from file into array $rows deleting
      * empty last cell of array
@@ -97,6 +83,7 @@ class LogParser extends ActiveRecord
             $logs->browser_info = $useragents->user_agent_id;
             $logs->save();
         }
+        Yii::$app->session->setFlash('success', "Файл добавлен в БД");
         return 0;
     }
 
