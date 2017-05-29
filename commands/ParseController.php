@@ -2,8 +2,8 @@
 
 namespace app\commands;
 
+use app\services\LogParser;
 use yii\console\Controller;
-use app\models\Logs;
 /**
  * Log parser.
  */
@@ -16,7 +16,7 @@ class ParseController extends Controller
 
     public function actionParse($file)
     {
-        $model = new Logs();
+        $model = new LogParser();
         $rows = $model->indexFile($file);
         $path_parts = pathinfo($file);
         $cutname = $path_parts['basename'];

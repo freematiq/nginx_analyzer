@@ -2,8 +2,8 @@
 
 namespace app\controllers;
 
-use app\models\Logs;
 use app\models\UploadHistory;
+use app\services\LogParser;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -47,7 +47,7 @@ class ParsingController extends Controller
 
     public function actionIndex()
     {
-        $model = new Logs();
+        $model = new LogParser();
         $filename = new UploadHistory();
 
         if (Yii::$app->request->isPost) {

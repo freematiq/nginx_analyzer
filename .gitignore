@@ -9,6 +9,11 @@ config/test_db.php
 db.php
 test_db.php
 
+#testfiles ignore
+
+log.txt
+web/log.txt
+web/uploads/log.txt
 
 # netbeans project files
 nbproject
