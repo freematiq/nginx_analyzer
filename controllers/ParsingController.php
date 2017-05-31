@@ -4,7 +4,7 @@ namespace app\controllers;
 
 use app\models\Logs;
 use app\models\UploadHistory;
-use app\services\LogParser;
+use app\services\LogParserService;
 use Yii;
 use yii\filters\AccessControl;
 use yii\web\Controller;
@@ -50,7 +50,7 @@ class ParsingController extends Controller
     {
         $model = new Logs();
         $filename = new UploadHistory();
-        $service = new LogParser();
+        $parser = new LogParserService();
 
         if (Yii::$app->request->isPost) {
             $model->file = UploadedFile::getInstance($model, 'file');
@@ -58,9 +58,9 @@ class ParsingController extends Controller
                 $model->file->saveAs($model->file);
                 $filename->filename = $model->file->name;
                 $filename->save();
-                $path = $filename->filename_id;
-                $rows = $service->indexFile($model->file);
-                $service->logUpload($rows, $path);
+                $filename_id = $filename->filename_id;
+                $rows = $parser->fileToParse($model->file);
+                $parser->logUploadThroughBrowser($rows, $filename_id);
             }
             return $this->redirect(\Yii::$app->urlManager->createUrl("parsing/index"));
         }

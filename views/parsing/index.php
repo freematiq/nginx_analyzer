@@ -33,7 +33,7 @@ $this->title = 'Upload';
 
                 <div class="panel-body">
                     <?= $form->field($model, 'file')->fileInput() ?>
-                    <button type="submit" onclick="this.disabled = true; this.innerHTML='подождите'">Парсинг</button>
+                    <button type="submit" class="btn btn-info" onclick="this.disabled = true; this.innerHTML='подождите'">Парсинг</button>
                 </div>
 
                 <?php ActiveForm::end() ?>

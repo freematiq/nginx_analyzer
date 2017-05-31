@@ -9,7 +9,7 @@ $config = [
     'bootstrap' => ['log'],
     'components' => [
         'parser' => [
-            'class' => 'app\services\LogParser',
+            'class' => 'app\services\LogParserService',
         ],
         'request' => [
             // !!! insert a secret key in the following (if it is empty) - this is required by cookie validation

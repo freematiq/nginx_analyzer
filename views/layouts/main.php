@@ -11,6 +11,7 @@ use app\assets\AppAsset;
 
 AppAsset::register($this);
 ?>
+
 <?php $this->beginPage() ?>
 <!DOCTYPE html>
 <html lang="<?= Yii::$app->language ?>">
@@ -62,3 +63,4 @@ AppAsset::register($this);
 </body>
 </html>
 <?php $this->endPage() ?>
+

@@ -2,7 +2,7 @@
 
 namespace app\commands;
 
-use app\services\LogParser;
+use app\services\LogParserService;
 use yii\console\Controller;
 /**
  * Log parser.
@@ -16,11 +16,16 @@ class ParseController extends Controller
 
     public function actionParse($file)
     {
-        $model = new LogParser();
-        $rows = $model->indexFile($file);
-        $path_parts = pathinfo($file);
-        $cutname = $path_parts['basename'];
-        $model->logUploadThroughConsole($rows, $cutname);
-        echo 'Successeded'. "\n";
+        if (file_exists($file)) {
+            $parser = new LogParserService();
+            $rows = $parser->fileToParse($file);
+            $path_parts = pathinfo($file);
+            $filename = $path_parts['basename'];
+            $parser->logUploadThroughConsole($rows, $filename);
+            echo 'Successeded'. "\n";
+        } else {
+            echo "Failure. $file doesn't exist. Try another name or path to file.". "\n";
+        }
+
     }
 }
