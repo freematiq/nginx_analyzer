@@ -76,7 +76,8 @@ class ParsingController extends Controller
         $model = new PlotCreation();
         $data = new PlotCreation();
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-            $data = Yii::$app->request->post();
+            //$data = Yii::$app->request->post();
+            $data = $model->creation();
         }
         return $this->render('plot', [
             'model' => $model,

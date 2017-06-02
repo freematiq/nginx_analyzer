@@ -5,7 +5,6 @@
 
 config/db.php
 config/test_db.php
-web/logs_with_ipv6.txt
 db.php
 test_db.php
 

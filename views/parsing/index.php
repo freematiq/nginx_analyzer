@@ -1,5 +1,6 @@
 <?php
 
+use app\models\QueryTypes;
 use yii\web\UploadedFile;
 
 /* @var $model app\models\Logs */

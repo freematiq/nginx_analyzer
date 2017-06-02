@@ -1,6 +1,8 @@
 <?php
 
-/* @var $data app\controllers\ParsingController */
+/**
+ * @var $data app\controllers\ParsingController
+ */
 
 
 use kartik\daterange\DateRangePicker;
@@ -9,6 +11,7 @@ use yii\data\ArrayDataProvider;
 use yii\data\SqlDataProvider;
 use yii\db\ActiveQuery;
 use yii\grid\GridView;
+use yii\helpers\ArrayHelper;
 use yii\helpers\Html;
 use yii\widgets\ActiveForm;
 use yii2mod\c3\chart\Chart;
@@ -29,23 +32,18 @@ $this->title = 'Start';
     <?= $form->field($model, 'date_to')->label('Дата до времени') ?>
     <?= $form->field($model, 'interval_quantity')->label('Количество разбиений') ?>
 
-
     <div class="form-group">
         <?= Html::submitButton('Показать', ['class' => 'btn btn-info']) ?>
     </div>
     <?php ActiveForm::end();
     var_dump($data);
 
-    $posts = Yii::$app->db->createCommand('SELECT COUNT(*) quantity, 
-to_timestamp(floor((extract(\'epoch\' FROM query_date) / 30 )) * 30) 
-AT TIME ZONE \'UTC\' AS interval FROM logs GROUP BY INTERVAL')->queryAll();
+    $interval = ArrayHelper::getColumn($data,'interval');
+    var_dump($interval);
+    $quantity = ArrayHelper::getColumn($data,'quantity');
+    var_dump($quantity);
 
-    if ($posts) {
-        foreach ($posts as $post)
-            echo 'в период времени ' . $post['interval'] . ' было запросов: ' . $post['quantity'] . '<hr>';
-    }
-
-    echo DateRangePicker::widget([
+    /*    echo DateRangePicker::widget([
         'name' => 'date_range',
         'value' => '2017-05-02 01:00:00 PM - 2017-05-03 01:00:00 PM',
         'convertFormat' => true,
@@ -56,7 +54,7 @@ AT TIME ZONE \'UTC\' AS interval FROM logs GROUP BY INTERVAL')->queryAll();
             'timePickerIncrement' => 10,
             'locale' => ['format' => 'Y-m-d h:i:s']
         ]
-    ]);
+    ]);*/
 
     /*echo Chart::widget([
         'options' => [
@@ -66,14 +64,15 @@ AT TIME ZONE \'UTC\' AS interval FROM logs GROUP BY INTERVAL')->queryAll();
             'data' => [
                 'x' => 'x',
                 'columns' => [
-                    ['x',],
-                    ['values',],
+
+                    ['x', $interval[0]],
+                    ['values', $quantity[0]],
                 ],
             ],
             'axis' => [
                 'x' => [
-                    'label' => 'Month',
-                    'type' => 'timeseries',
+                    'label' => 'Timeline',
+                    'type' => 'category',
                     'tick' => [
                         'format' => '%Y-%m-%d'
                     ],
@@ -100,21 +99,5 @@ AT TIME ZONE \'UTC\' AS interval FROM logs GROUP BY INTERVAL')->queryAll();
 
     //var_dump($rows);
     var_dump($rowed);*/
-
-
-    /*        $dataProvider = new ActiveDataProvider([
-                'query' => \app\models\Logs::findBySql('select * from logs'),
-                'pagination' => [
-                    'pageSize' => 100,
-                ],
-            ]);
-            echo GridView::widget([
-                'dataProvider' => $dataProvider,
-                'columns' => [
-                    ['class' => 'yii\grid\SerialColumn'],
-                    'query_date',
-                    'sip',
-                ],
-            ]);*/
     ?>
 </div>
