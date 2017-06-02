@@ -19,7 +19,8 @@
         "yiisoft/yii2-bootstrap": "~2.0.0",
         "yiisoft/yii2-swiftmailer": "~2.0.0",
         "fxp/composer-asset-plugin": "^1.2.0",
-        "yii2mod/yii2-c3-chart": "*"
+        "yii2mod/yii2-c3-chart": "*",
+        "kartik-v/yii2-date-range": "*"
     },
     "require-dev": {
         "yiisoft/yii2-debug": "~2.0.0",

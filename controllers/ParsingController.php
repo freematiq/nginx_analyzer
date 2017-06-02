@@ -4,16 +4,19 @@ namespace app\controllers;
 
 use app\models\Logs;
 use app\models\UploadHistory;
+use app\models\UserAgents;
 use app\services\LogParserService;
+use Throwable;
 use Yii;
+use yii\db\Exception;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
 use yii\web\UploadedFile;
+use app\models\PlotCreation;
 
 class ParsingController extends Controller
 {
-
     public function behaviors()
     {
         return [
@@ -70,7 +73,15 @@ class ParsingController extends Controller
 
     public function actionPlot()
     {
-        return $this->render('plot');
+        $model = new PlotCreation();
+        $data = new PlotCreation();
+        if ($model->load(Yii::$app->request->post()) && $model->validate()) {
+            $data = Yii::$app->request->post();
+        }
+        return $this->render('plot', [
+            'model' => $model,
+            'data' => $data,
+        ]);
     }
 
 }
