@@ -17,6 +17,7 @@ use yii\web\UploadedFile;
  * @property string $quested_page
  * @property integer $browser_info
  * @property string $user_ip
+ * @property string $user_ip_reserve
  * @property integer $uploaded_file
  * @property string $created_at
  * @property double $query_time_float
@@ -76,6 +77,7 @@ class Logs extends \yii\db\ActiveRecord
             'quested_page' => 'Quested Page',
             'browser_info' => 'Browser Info',
             'user_ip' => 'User Ip',
+            'user_ip_reserve' => 'User Ip',
             'uploaded_file' => 'Uploaded File',
             'created_at' => 'Created At',
             'query_time_float' => 'Query Time Float',

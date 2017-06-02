@@ -62,12 +62,15 @@ class LogParserService
                     $types->save();
                 }
 
-                $useragents = UserAgents::find()->where(['browser_info' => str_replace('"', '', $row_data[0][10])])->one();
-                if (is_null($useragents)) {
-                    $useragents = new UserAgents();
-                    $useragents->browser_info = str_replace('"', '', $row_data[0][10]);
-                    $useragents->save();
-                }
+                /*                $useragents = UserAgents::find()->where(['browser_info' => str_replace('"', '', $row_data[0][10])])->one();
+                                if (is_null($useragents)) {
+                                    $useragents = new UserAgents();
+                                    $useragents->browser_info = str_replace('"', '', $row_data[0][10]);
+                                    $useragents->save();
+                                }*/
+                $useragents = new UserAgents();
+                $service = new LogParserService();
+                $service->fillingTableLogs($row_data[0][10]);
 
                 $logs = new Logs();
                 $logs->query_type = $types->query_type_id;
@@ -94,8 +97,16 @@ class LogParserService
                 $logs->query_time_float = $row_data[0][8];
                 $logs->query_time_numeric = $row_data[0][8];
                 $logs->quested_page = str_replace('"', '', $row_data[0][9]);
+
                 if (str_replace('"', '', $row_data[0][11]) != "-") {
-                    $logs->user_ip = str_replace('"', '', $row_data[0][11]);
+                    if (substr_count($row_data[0][11], ',') === 0) {
+                        $logs->user_ip = str_replace('"', '', $row_data[0][11]);
+                    } elseif (substr_count($row_data[0][11], ',') > 0) {
+                        $period = str_replace('"', '', $row_data[0][11]);
+                        $period2 = stristr($period, ',', false);
+                        $logs->user_ip = stristr($period, ',', true);
+                        $logs->user_ip_reserve = str_replace(",", '', $period2);
+                    }
                 } elseif (str_replace('"', '', $row_data[0][11]) === "-") {
                     $logs->user_ip = $row_data[0][0];
                 }
@@ -178,7 +189,14 @@ class LogParserService
                 $logs->query_time_numeric = $row_data[0][8];
                 $logs->quested_page = str_replace('"', '', $row_data[0][9]);
                 if (str_replace('"', '', $row_data[0][11]) != "-") {
-                    $logs->user_ip = str_replace('"', '', $row_data[0][11]);
+                    if (substr_count($row_data[0][11], ',') === 0) {
+                        $logs->user_ip = str_replace('"', '', $row_data[0][11]);
+                    } elseif (substr_count($row_data[0][11], ',') > 0) {
+                        $period = str_replace('"', '', $row_data[0][11]);
+                        $period2 = stristr($period, ',', false);
+                        $logs->user_ip = stristr($period, ',', true);
+                        $logs->user_ip_reserve = str_replace(",", '', $period2);
+                    }
                 } elseif (str_replace('"', '', $row_data[0][11]) === "-") {
                     $logs->user_ip = $row_data[0][0];
                 }
@@ -190,6 +208,17 @@ class LogParserService
         } catch (\Throwable $exception) {
             $transaction->rollBack();
             throw $exception;
+        }
+        return 0;
+    }
+
+    public function fillingTableLogs($browser_info)
+    {
+        $useragents = UserAgents::find()->where(['browser_info' => str_replace('"', '', $browser_info)])->one();
+        if (is_null($useragents)) {
+            $useragents = new UserAgents();
+            $useragents->browser_info = str_replace('"', '', $browser_info);
+            $useragents->save();
         }
         return 0;
     }
