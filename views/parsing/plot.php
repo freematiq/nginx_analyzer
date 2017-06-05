@@ -56,7 +56,7 @@ $this->title = 'Start';
         ]
     ]);*/
 
-    /*echo Chart::widget([
+    echo Chart::widget([
         'options' => [
             'id' => 'timeseries_chart'
         ],
@@ -65,8 +65,8 @@ $this->title = 'Start';
                 'x' => 'x',
                 'columns' => [
 
-                    ['x', $interval[0]],
-                    ['values', $quantity[0]],
+                    ['x', $data->quantity],
+                    ['values', $data->interval],
                 ],
             ],
             'axis' => [
@@ -79,7 +79,7 @@ $this->title = 'Start';
                 ],
             ]
         ]
-    ]);*/
+    ]);
 
     /*$from_date = '2017-05-22 09:00:00+07';
     $to_date = '2017-05-25 10:00:00+07';
