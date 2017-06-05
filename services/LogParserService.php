@@ -85,8 +85,21 @@ class LogParserService
         $uploadedfile->filename = $filename;
         $uploadedfile->save();
 
+        /*
+         * в случае ошибки при заполнении данными происходит откат для таблиц
+         * logs, query_types, user_agents.
+         * в случае возниконвения ошибок при разборе новых строк подставлять проблемную строку напрямую в следующий код:
+         *  <?php
+            $data = '';
+            preg_match_all('/"(?:\\\\.|[^\\\\"])*"|\S+/', $data, $matches);
+            var_dump($matches);
+            ?>
+         */
         $transaction = Yii::$app->getDb()->beginTransaction();
         try {
+            /*
+             * разбор файла по строкам
+             */
             foreach ($rows as $row => $data) {
                 $this->fillingTables($data, $uploadedfile->filename_id);
                 }
@@ -158,7 +171,8 @@ class LogParserService
         /*
          * заполняется таблица user_agents. дополнительно удаляются символы ".
          */
-        $useragents = UserAgents::find()->where(['browser_info' => str_replace('"', '', $row_data[0][10])])->one();
+
+        $useragents = UserAgents::find()->where(['browser_info' => str_replace('"', '', $v_browser_info)])->one();
         if (is_null($useragents)) {
             $useragents = new UserAgents();
             $useragents->browser_info = str_replace('"', '', $v_browser_info);

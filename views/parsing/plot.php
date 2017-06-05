@@ -56,6 +56,8 @@ $this->title = 'Start';
         ]
     ]);*/
 
+    $a = [1,2,3];
+    $b = [10,20,30];
     echo Chart::widget([
         'options' => [
             'id' => 'timeseries_chart'
@@ -65,8 +67,8 @@ $this->title = 'Start';
                 'x' => 'x',
                 'columns' => [
 
-                    ['x', $data->quantity],
-                    ['values', $data->interval],
+                    ['x', $a],
+                    ['y', 1,2,3],
                 ],
             ],
             'axis' => [
