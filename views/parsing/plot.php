@@ -57,7 +57,8 @@ $this->title = 'Start';
     //var_dump($quantity);
 
     $arrX = array_merge(['x'], $interval);
-    $arrY = array_merge(['количество запросов'], $quantity);
+    $arrY = array_merge(['количество запросов в момент времени'], $quantity);
+
     echo Chart::widget([
         'options' => [
             'id' => 'timeseries_chart'
@@ -68,6 +69,43 @@ $this->title = 'Start';
                 'columns' => [
                     $arrX,
                     $arrY,
+                ],
+                'color' => [
+                        'pattern' => [
+                                '#2ca02c', '#98df8a'
+                        ]
+                ]
+            ],
+            'axis' => [
+                'x' => [
+                    'label' => 'Timeline',
+                    'type' => 'category',
+                    'tick' => [
+                        'format' => '%Y-%m-%d'
+                    ],
+                ],
+            ]
+        ]
+    ]);
+
+    $interval2 = ArrayHelper::getColumn($data2, 'interval');
+    //var_dump($interval);
+    $quantity2 = ArrayHelper::getColumn($data2, 'quantity');
+    //var_dump($quantity);
+
+    $arrX2 = array_merge(['x'], $interval2);
+    $arrY2 = array_merge(['среднее время выполнения запроса'], $quantity2);
+
+    echo Chart::widget([
+        'options' => [
+            'id' => 'timeseries_chart2'
+        ],
+        'clientOptions' => [
+            'data' => [
+                'x' => 'x',
+                'columns' => [
+                    $arrX2,
+                    $arrY2,
                 ],
             ],
             'axis' => [

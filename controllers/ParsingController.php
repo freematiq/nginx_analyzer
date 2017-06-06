@@ -6,6 +6,7 @@ use app\models\Logs;
 use app\models\UploadHistory;
 use app\models\UserAgents;
 use app\services\LogParserService;
+use app\services\PlotCreationService;
 use Throwable;
 use Yii;
 use yii\db\Exception;
@@ -75,13 +76,17 @@ class ParsingController extends Controller
     {
         $model = new PlotCreation();
         $data = new PlotCreation();
+        $data2 = new PlotCreation();
+        $model->date_from = date('Y-m-d h:i:s');
+        $model->date_to = date('Y-m-d h:i:s');
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
-            //$data = Yii::$app->request->post();
             $data = $model->creation();
+            $data2 = $model->average();
         }
         return $this->render('plot', [
             'model' => $model,
             'data' => $data,
+            'data2' => $data2,
         ]);
     }
 
