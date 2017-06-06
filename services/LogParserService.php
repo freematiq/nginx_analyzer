@@ -14,7 +14,7 @@ use Yii;
  * @property LogParserService $parser The parser component. This property is read-only.
  */
 class LogParserService
-{
+{ private $useragents;
     /**
      * This method imports data from file into array $rows deleting
      * empty last cell of array
@@ -120,6 +120,7 @@ class LogParserService
      */
     public function fillingTables($data, $file_id)
     {
+
         /*
               * с помощью регулярного выражения разбираем строку в массив.
               * ожидается 12 элементов в массиве
@@ -172,6 +173,18 @@ class LogParserService
          * заполняется таблица user_agents. дополнительно удаляются символы ".
          */
 
+        /*$cachedUserAgents=[];
+        $key = str_replace('"', '', $v_browser_info);
+        $cachedUserAgents["$key"] = $this->useragents;
+        if ($this->useragents == null) {
+            $this->useragents = UserAgents::find()->where(['browser_info' => str_replace('"', '', $v_browser_info)])->one();
+            if (is_null($this->useragents)) {
+                $this->useragents = new UserAgents();
+                $this->useragents->browser_info = str_replace('"', '', $v_browser_info);
+                $this->useragents->save();
+                //$cachedUserAgents = $useragents;
+            }
+        }*/
         $useragents = UserAgents::find()->where(['browser_info' => str_replace('"', '', $v_browser_info)])->one();
         if (is_null($useragents)) {
             $useragents = new UserAgents();

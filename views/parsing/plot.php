@@ -2,6 +2,7 @@
 
 /**
  * @var $data app\controllers\ParsingController
+ * @var $model app\controllers\ParsingController
  */
 
 
@@ -28,36 +29,35 @@ $this->title = 'Start';
     <?php
 
     $form = ActiveForm::begin() ?>
-    <?= $form->field($model, 'date_from')->label('Дата от времени') ?>
-    <?= $form->field($model, 'date_to')->label('Дата до времени') ?>
-    <?= $form->field($model, 'interval_quantity')->label('Количество разбиений') ?>
 
-    <div class="form-group">
-        <?= Html::submitButton('Показать', ['class' => 'btn btn-info']) ?>
-    </div>
-    <?php ActiveForm::end();
-    var_dump($data);
-
-    $interval = ArrayHelper::getColumn($data,'interval');
-    var_dump($interval);
-    $quantity = ArrayHelper::getColumn($data,'quantity');
-    var_dump($quantity);
-
-    /*    echo DateRangePicker::widget([
+    <?= $form->field($model, 'some_attribute')->widget(DateRangePicker::className(),[
         'name' => 'date_range',
-        'value' => '2017-05-02 01:00:00 PM - 2017-05-03 01:00:00 PM',
         'convertFormat' => true,
         'startAttribute' => 'date_from',
         'endAttribute' => 'date_to',
+        'startInputOptions' => ['value' => '2017-02-01 12:00:00'],
+        'endInputOptions' => ['value' => '2017-04-02 11:00:00'],
         'pluginOptions' => [
             'timePicker' => true,
             'timePickerIncrement' => 10,
             'locale' => ['format' => 'Y-m-d h:i:s']
         ]
-    ]);*/
+    ])->label('Период времени') ?>
+    <?= $form->field($model, 'interval_quantity')->label('Количество секунд для группировки') ?>
 
-    $a = [1,2,3];
-    $b = [10,20,30];
+    <div class="form-group">
+        <?= Html::submitButton('Показать', ['class' => 'btn btn-info']) ?>
+    </div>
+    <?php ActiveForm::end();
+
+  //  var_dump($data);
+    $interval = ArrayHelper::getColumn($data, 'interval');
+    //var_dump($interval);
+    $quantity = ArrayHelper::getColumn($data, 'quantity');
+    //var_dump($quantity);
+
+    $arrX = array_merge(['x'], $interval);
+    $arrY = array_merge(['количество запросов'], $quantity);
     echo Chart::widget([
         'options' => [
             'id' => 'timeseries_chart'
@@ -66,9 +66,8 @@ $this->title = 'Start';
             'data' => [
                 'x' => 'x',
                 'columns' => [
-
-                    ['x', $a],
-                    ['y', 1,2,3],
+                    $arrX,
+                    $arrY,
                 ],
             ],
             'axis' => [
@@ -83,23 +82,5 @@ $this->title = 'Start';
         ]
     ]);
 
-    /*$from_date = '2017-05-22 09:00:00+07';
-    $to_date = '2017-05-25 10:00:00+07';
-
-    $rowed = (new \yii\db\Query())
-        ->select(['diff' => '(max(query_date)-min(query_date))/24'])
-        ->from('logs')
-        ->all();
-
-    $rows = (new \yii\db\Query())
-        ->select(['date' => 'query_date', 'count' => 'count(*)'])
-        ->from('logs')
-        ->where(['between', 'query_date', $from_date, $to_date])
-        ->groupBy('query_date')
-        ->orderBy('query_date')
-        ->all();
-
-    //var_dump($rows);
-    var_dump($rowed);*/
     ?>
 </div>
