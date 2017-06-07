@@ -30,7 +30,7 @@ $this->title = 'Start';
 
     $form = ActiveForm::begin() ?>
 
-    <?= $form->field($model, 'some_attribute')->widget(DateRangePicker::className(),[
+    <?= $form->field($model, 'some_attribute')->widget(DateRangePicker::className(), [
         'name' => 'date_range',
         'convertFormat' => true,
         'startAttribute' => 'date_from',
@@ -50,74 +50,119 @@ $this->title = 'Start';
     </div>
     <?php ActiveForm::end();
 
-  //  var_dump($data);
     $interval = ArrayHelper::getColumn($data, 'interval');
-    //var_dump($interval);
     $quantity = ArrayHelper::getColumn($data, 'quantity');
-    //var_dump($quantity);
-
     $arrX = array_merge(['x'], $interval);
     $arrY = array_merge(['количество запросов в момент времени'], $quantity);
 
     echo Chart::widget([
-        'options' => [
-            'id' => 'timeseries_chart'
-        ],
-        'clientOptions' => [
-            'data' => [
+        'options' => ['id' => 'count'],
+        'clientOptions' =>
+            ['data' => [
                 'x' => 'x',
-                'columns' => [
-                    $arrX,
-                    $arrY,
-                ],
-                'color' => [
-                        'pattern' => [
-                                '#2ca02c', '#98df8a'
-                        ]
-                ]
+                'columns' => [$arrX, $arrY,],
+                'colors' => ['количество запросов в момент времени' => '#513535'],
+                'type' => 'area-spline',
+                'labels' => true,
             ],
-            'axis' => [
-                'x' => [
-                    'label' => 'Timeline',
-                    'type' => 'category',
-                    'tick' => [
-                        'format' => '%Y-%m-%d'
+                'axis' => [
+                    'x' => [
+                        'show' => false,
+                        'label' => 'Промежутки времени',
+                        'type' => 'category',
+                        'tick' => [['format' => '%Y-%m-%d'],],
                     ],
-                ],
+                    'y' => [
+                        'label' => ['text' => 'Запросы', 'position' => 'outer-middle'],
+                    ]
+                ]
             ]
-        ]
     ]);
 
     $interval2 = ArrayHelper::getColumn($data2, 'interval');
-    //var_dump($interval);
     $quantity2 = ArrayHelper::getColumn($data2, 'quantity');
-    //var_dump($quantity);
-
     $arrX2 = array_merge(['x'], $interval2);
     $arrY2 = array_merge(['среднее время выполнения запроса'], $quantity2);
 
     echo Chart::widget([
-        'options' => [
-            'id' => 'timeseries_chart2'
-        ],
-        'clientOptions' => [
-            'data' => [
+        'options' => ['id' => 'average'],
+        'clientOptions' =>
+            ['data' => [
                 'x' => 'x',
-                'columns' => [
-                    $arrX2,
-                    $arrY2,
-                ],
+                'columns' => [$arrX2, $arrY2,],
+                'colors' => ['среднее время выполнения запроса' => '#385e3e'],
+                'type' => 'area-spline',
             ],
-            'axis' => [
-                'x' => [
-                    'label' => 'Timeline',
-                    'type' => 'category',
-                    'tick' => [
-                        'format' => '%Y-%m-%d'
+                'axis' => [
+                    'x' => [
+                        'show' => false,
+
+                        'label' => 'Промежутки времени',
+                        'type' => 'category',
+                        'tick' => [['format' => '%Y-%m-%d'],],
                     ],
-                ],
+                    'y' => [
+                        'label' => ['text' => 'Время выполнения (сек)', 'position' => 'outer-middle'],
+                    ]
+                ]
             ]
-        ]
+    ]);
+
+    $queries = ArrayHelper::getColumn($data3, 'queries');
+    $sip = ArrayHelper::getColumn($data3, 'sip');
+    $arrX3 = array_merge(['x1'], $sip);
+    $arrY3 = array_merge(['количество запросов с ip'], $queries);
+    $queries2 = ArrayHelper::getColumn($data4, 'queries');
+    $url_query = ArrayHelper::getColumn($data4, 'url_query');
+    $arrX4 = array_merge(['x2'], $url_query);
+    $arrY4 = array_merge(['количество запросов с url'], $queries2);
+
+    echo Chart::widget([
+        'options' => ['id' => 'sip'],
+        'clientOptions' =>
+            ['data' => [
+                'x' => 'x1',
+                'columns' => [$arrX3, $arrY3],
+                'colors' => ['количество запросов с ip' => '#8e0b2c',
+                    'количество запросов с url' => '#8c7379'],
+                'type' => 'bar',
+                'hide' => false,
+            ],
+                'axis' => [
+                    'rotated' => true,
+                    'x' => [
+                        'show' => true,
+                        'type' => 'category',
+                    ],
+                    'y' => [
+                        'label' => ['text' => 'Количество запросов', 'position' => 'outer-middle'],
+                    ]
+                ]
+            ]
+    ]);
+
+    echo Chart::widget([
+        'options' => ['id' => 'url'],
+        'clientOptions' =>
+            ['data' => [
+                'x' => 'x2',
+                'columns' => [$arrX4, $arrY4],
+                'colors' => ['количество запросов с ip' => '#8e0b2c',
+                    'количество запросов с url' => '#8c7379'],
+                'type' => 'bar',
+                'hide' => false,
+            ],
+                'axis' => [
+                    'rotated' => true,
+                    'x' => [
+                        'show' => true,
+                        'type' => 'category',
+                    ],
+                    'y' => [
+                        'label' => ['text' => 'Количество запросов', 'position' => 'outer-middle'],
+                    ]
+                ]
+            ]
     ]);
 
     ?>

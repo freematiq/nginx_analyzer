@@ -77,16 +77,22 @@ class ParsingController extends Controller
         $model = new PlotCreation();
         $data = new PlotCreation();
         $data2 = new PlotCreation();
+        $data3 = new PlotCreation();
+        $data4 = new PlotCreation();
         $model->date_from = date('Y-m-d h:i:s');
         $model->date_to = date('Y-m-d h:i:s');
         if ($model->load(Yii::$app->request->post()) && $model->validate()) {
             $data = $model->creation();
             $data2 = $model->average();
+            $data3 = $model->groupbysip();
+            $data4 = $model->groupbyurl();
         }
         return $this->render('plot', [
             'model' => $model,
             'data' => $data,
             'data2' => $data2,
+            'data3' => $data3,
+            'data4' => $data4,
         ]);
     }
 
