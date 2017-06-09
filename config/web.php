@@ -8,6 +8,14 @@ $config = [
     'defaultRoute' => 'parsing/index',
     'bootstrap' => ['log'],
     'components' => [
+        'urlManager' => [
+            'class' => 'yii\web\UrlManager',
+            'showScriptName' => false,
+            'enablePrettyUrl' => true,
+            'rules' => [
+                '<alias:index|plot>' => 'parsing/<alias>',
+            ],
+        ],
         'parser' => [
             'class' => 'app\services\LogParserService',
         ],
