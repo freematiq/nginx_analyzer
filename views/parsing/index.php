@@ -9,7 +9,7 @@ use yii\web\UploadedFile;
 
 use yii\widgets\ActiveForm;
 
-$this->title = 'Upload';
+$this->title = 'Parser';
 ?>
 <div class="site-index">
     <div class="row">

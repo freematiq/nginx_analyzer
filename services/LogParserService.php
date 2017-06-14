@@ -15,8 +15,6 @@ use Yii;
  */
 class LogParserService
 {
-    private $useragents;
-
     /**
      * This method imports data from file into array $rows deleting
      * empty last cell of array
@@ -135,7 +133,7 @@ class LogParserService
         /*
          * удаляем знаки "
          */
-        $string = str_replace('"', '', $string);
+        $string = trim($string, '\"');
         /*
          * ожидается три элемента в массиве, третий в дальнейшем не используется
          */
@@ -147,7 +145,8 @@ class LogParserService
         /*
          * элементам массива с данными присваиваются говорящие имена, которые соответсвуют
          * названиям столбцов в таблицах, но имеют приставку v_ для лучшей читаемости.
-         * элементы с индексами [0][1], [0][2] всегда не используются
+         * элементы с индексами [0][1], [0][2] всегда не используются. Тип запроса и url вместе из тех соображений,
+         * что бывает, что ни того, ни другого нет.
          */
         $v_sip = $row_data[0][0];
         $v_query_date = str_replace('[', '', $row_data[0][3]) . str_replace(']', '', $row_data[0][4]);
@@ -174,24 +173,13 @@ class LogParserService
         /*
          * заполняется таблица user_agents. дополнительно удаляются символы ".
          */
-        $cachedUserAgents = [];
-        $key = str_replace('"', '', $v_browser_info);
-        $cachedUserAgents["$key"] = $this->useragents;
-        if ($this->useragents == null) {
-            $this->useragents = UserAgents::find()->where(['browser_info' => str_replace('"', '', $v_browser_info)])->one();
-            if (is_null($this->useragents)) {
-                $this->useragents = new UserAgents();
-                $this->useragents->browser_info = str_replace('"', '', $v_browser_info);
-                $this->useragents->save();
-                //$cachedUserAgents = $useragents;
-            }
+        $key = trim($v_browser_info, '\"');
+        $useragent = UserAgents::find()->where(['browser_info' => $key])->one();
+        if (is_null($useragent)) {
+            $useragent = new UserAgents();
+            $useragent->browser_info = $key;
+            $useragent->save();
         }
-        /* $useragents = UserAgents::find()->where(['browser_info' => str_replace('"', '', $v_browser_info)])->one();
-         if (is_null($useragents)) {
-             $useragents = new UserAgents();
-             $useragents->browser_info = str_replace('"', '', $v_browser_info);
-             $useragents->save();
-         }*/
         /*
          * заполняется таблица logs.
          * query_type, browser_info приходящие идентификаторы внешних ключей.
@@ -256,7 +244,7 @@ class LogParserService
             $logs->user_ip = $v_sip;
         }
         $logs->uploaded_file = $file_id;
-        $logs->browser_info = $this->useragents->user_agent_id;
+        $logs->browser_info = $useragent->user_agent_id;
         $logs->save();
         return 0;
     }

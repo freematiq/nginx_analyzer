@@ -38,6 +38,7 @@ AppAsset::register($this);
             //   ['label' => 'Home', 'url' => ['/site/index']],
             ['label' => 'Парсер логов', 'url' => ['/parsing/index']],
             ['label' => 'Графики', 'url' => ['/parsing/plot']],
+            ['label' => 'График из файла', 'url' => ['/parsing/plotfromhistory']],
         ],
     ]);
     NavBar::end();

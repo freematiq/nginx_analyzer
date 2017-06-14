@@ -14,6 +14,7 @@ $config = [
             'enablePrettyUrl' => true,
             'rules' => [
                 '<alias:index|plot>' => 'parsing/<alias>',
+            //    'parsing/plot/<PlotCreation[some_attribute]:\d+>/<date_from:\d+>/<date_to:\d+>/<interval_quantity:\d+>' => 'parsing/plot',
             ],
         ],
         'parser' => [

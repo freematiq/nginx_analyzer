@@ -3,13 +3,10 @@
 namespace app\controllers;
 
 use app\models\Logs;
+use app\models\PlotReference;
 use app\models\UploadHistory;
-use app\models\UserAgents;
 use app\services\LogParserService;
-use app\services\PlotCreationService;
-use Throwable;
 use Yii;
-use yii\db\Exception;
 use yii\filters\AccessControl;
 use yii\web\Controller;
 use yii\filters\VerbFilter;
@@ -74,30 +71,45 @@ class ParsingController extends Controller
 
     public function actionPlot()
     {
-        $model = new PlotCreation();
-        $data = new PlotCreation();
-        $data2 = new PlotCreation();
-        $data3 = new PlotCreation();
-        $data4 = new PlotCreation();
-       // $data5 = new PlotCreation();
-        $model->date_from = date('Y-m-d h:i:s');
-        $model->date_to = date('Y-m-d h:i:s');
-        $model->interval_quantity = 60;
-        if ($model->load(Yii::$app->request->get()) && $model->validate()) {
-            $data = $model->creation2();
-            $data2 = $model->average2();
-            $data3 = $model->groupbysip();
-            $data4 = $model->groupbyurl();
-         //   $data5 = $model->longestquery();
+        $plotCreation = new PlotCreation();
+        $plotCreation->load(Yii::$app->request->get()) && $plotCreation->validate();
+        if (empty($plotCreation->interval_quantity) &&
+            empty($plotCreation->date_from &&
+            empty($plotCreation->date_to))) {
+            $plotCreation->interval_quantity = 60;
+            $plotCreation->date_from = '2017-02-21 22:15:00';
+            $plotCreation->date_to = '2017-02-21 22:25:00';
+        };
+        if (is_numeric($plotCreation->interval_quantity)===false
+        ){
+            throw new \Exception('Введите число');
         }
+        $plot1 = $plotCreation->creation();
+        $plot2 = $plotCreation->average();
+        $plot3 = $plotCreation->groupbysip();
+        $plot4 = $plotCreation->groupbyurl();
+        $plot5 = $plotCreation->groupbycode();
+        $plot6 = $plotCreation->groupbytime();
+
         return $this->render('plot', [
-            'model' => $model,
-            'data' => $data,
-            'data2' => $data2,
-            'data3' => $data3,
-            'data4' => $data4,
-          //  'data5' => $data5,
+            'plotCreation' => $plotCreation,
+            'plot1' => $plot1,
+            'plot2' => $plot2,
+            'plot3' => $plot3,
+            'plot4' => $plot4,
+            'plot5' => $plot5,
+            'plot6' => $plot6,
         ]);
+    }
+
+    public function actionPlotfromhistory()
+    {
+        $plotCreation = new PlotReference();
+        $plotCreation->load(Yii::$app->request->get());
+        $plot1 = $plotCreation->plotfromfile();
+        return $this->render('plotfromhistory', [
+            'plotCreation' => $plotCreation,
+            'plot1' => $plot1]);
     }
 
 }
