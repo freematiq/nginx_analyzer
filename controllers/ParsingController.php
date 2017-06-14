@@ -75,13 +75,14 @@ class ParsingController extends Controller
         $plotCreation->load(Yii::$app->request->get()) && $plotCreation->validate();
         if (empty($plotCreation->interval_quantity) &&
             empty($plotCreation->date_from &&
-            empty($plotCreation->date_to))) {
+                empty($plotCreation->date_to))
+        ) {
             $plotCreation->interval_quantity = 60;
             $plotCreation->date_from = '2017-02-21 22:15:00';
             $plotCreation->date_to = '2017-02-21 22:25:00';
         };
-        if (is_numeric($plotCreation->interval_quantity)===false
-        ){
+        if (is_numeric($plotCreation->interval_quantity) === false
+        ) {
             throw new \Exception('Введите число');
         }
         $plot1 = $plotCreation->creation();
@@ -106,10 +107,9 @@ class ParsingController extends Controller
     {
         $plotCreation = new PlotReference();
         $plotCreation->load(Yii::$app->request->get());
-        $plot1 = $plotCreation->plotfromfile();
         return $this->render('plotfromhistory', [
             'plotCreation' => $plotCreation,
-            'plot1' => $plot1]);
+        ]);
     }
 
 }

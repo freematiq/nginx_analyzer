@@ -17,17 +17,4 @@ class PlotReference extends Model
         ];
     }
 
-    public function plotfromfile()
-    {
-        $plot = Yii::$app->db->createCommand(
-            'SELECT min(query_date) a, 
-                        max(query_date) b
-                FROM logs 
-                WHERE uploaded_file= :filename_id', [
-            'filename_id' => $this->filename_id,
-        ])->queryAll();
-
-        return $plot;
-    }
-
 }

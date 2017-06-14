@@ -1,7 +1,6 @@
 <?php
 
 /**
- * @var array $plot1 app\controllers\ParsingController
  * @var app\models\PlotReference $plotCreation
  */
 
@@ -26,10 +25,10 @@ $provider = new SqlDataProvider([
               filename,
               date
               FROM upload_history
-              ORDER BY filename_id',
+              ORDER BY date DESC',
     'totalCount' => (int)$total,
     'pagination' => [
-        'pageSize' => 5,]]);
+        'pageSize' => 20,]]);
 
 ?>
 <div class="container container-table">

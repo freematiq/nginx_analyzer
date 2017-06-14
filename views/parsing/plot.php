@@ -60,8 +60,8 @@ $this->title = 'Plots';
     $interval = ArrayHelper::getColumn($plot1, 'interval');
     $quantity = ArrayHelper::getColumn($plot1, 'quantity');
     $arrX = array_merge(['x'], $interval);
-    $arrY = array_merge(['количество запросов в момент времени'], $quantity);
     $interval2 = ArrayHelper::getColumn($plot2, 'interval');
+    $arrY = array_merge(['количество запросов в момент времени'], $quantity);
     $quantity2 = ArrayHelper::getColumn($plot2, 'quantity');
     $arrX2 = array_merge(['x'], $interval2);
     $arrY2 = array_merge(['среднее время выполнения запроса'], $quantity2);
@@ -183,7 +183,7 @@ $this->title = 'Plots';
 
     <div class="container container-table">
         <h2>
-            <p class="text-center">Top 20 url, которые дольше всего обрабатываются</p>
+            <p class="text-center">Top 20 url, которые чаще всего обрабатываются</p>
         </h2>
     </div>
 
@@ -252,18 +252,24 @@ $this->title = 'Plots';
                       FROM (
                             SELECT count(url_query) 
                             FROM logs 
+                            WHERE query_date BETWEEN :date_from AND :date_to AND query_code!=200
                             GROUP BY url_query
-                            ) AS count')
+                            ) AS count', [
+        'date_from' => $plotCreation->date_from,
+        'date_to' => $plotCreation->date_to
+    ])
         ->queryScalar();
 
     $url_provider = new SqlDataProvider([
         'sql' => 'SELECT query_code Код_запроса, 
                          url_query Адрес_запроса, 
                          count(query_code) Количество  
-                      FROM logs 
+                      FROM logs
+                      WHERE query_date BETWEEN :date_from AND :date_to AND query_code!=200
                       GROUP BY url_query, query_code 
                       ORDER BY Количество DESC',
-        'totalCount' => (int)$total,
+        'params' => [':date_from' => $plotCreation->date_from, ':date_to' => $plotCreation->date_to],
+        'totalCount' => $total,
         'pagination' => [
             'pageSize' => 10,
         ]
@@ -279,26 +285,25 @@ $this->title = 'Plots';
                          query_time_numeric, 
                          CASE WHEN max(query_time_numeric) over wind = query_time_numeric then query_date end maxt, 
                          CASE WHEN min(query_time_numeric) over wind = query_time_numeric then query_date end mint 
-                  FROM logs
+                  FROM logs WHERE query_date BETWEEN :date_from AND :date_to
                   WINDOW wind as (partition by url_query)
                                     )
                   SELECT DISTINCT 
                          url_query URL, 
                          max Максимальное_время, 
-                         avg Среднее_время, 
+                         round(avg, 3) Среднее_время, 
                          min Минимальное_время, 
                          max(maxt) over (partition by url_query) Время_максимального_запроса, 
                          min(mint) over (partition by url_query) Время_минимального_запроса 
-                  FROM external',
-        'totalCount' => (int)$total,
-        'pagination' => [
-            'pageSize' => 10,
-        ]
+                  FROM external
+                  ORDER BY Максимальное_время DESC',
+        'params' => [':date_from' => $plotCreation->date_from, ':date_to' => $plotCreation->date_to],
+        'totalCount' => 20,
     ]);
     ?>
     <div class="container container-table">
         <h2>
-            <p class="text-center">Время выполнения запросов</p>
+            <p class="text-center">Время выполнения запросов в сек.</p>
         </h2>
     </div>
 
@@ -314,7 +319,7 @@ $this->title = 'Plots';
 
     <div class="container container-table">
         <h2>
-            <p class="text-center">Количество кодов запросов с url</p>
+            <p class="text-center">Количество кодов запросов с url (все, кроме 200)</p>
         </h2>
     </div>
 
@@ -324,6 +329,7 @@ $this->title = 'Plots';
         'summary' => false,
         'dataProvider' => $url_provider,
         'captionOptions' => ['class' => 'h4 text-center text-info'],
+        'emptyText' => 'Все с кодом 200',
     ]);
     Pjax::end();
     ?>
