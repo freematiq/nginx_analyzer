@@ -54,18 +54,25 @@ echo GridView::widget([
             'label' => 'Время загрузки файла'],
         ['label' => 'Построить график по этому файлу',
             'format' => 'raw',
-            'content' => function ($plotCreation, $key, $index, $column) {
+            'content' => function ($plotCreation) {
                 $plot = Yii::$app->db->createCommand(
                     'SELECT min(query_date) a, 
                         max(query_date) b 
                 FROM logs 
                 WHERE uploaded_file = :filename_id', ['filename_id' => $plotCreation['filename_id']])->queryAll();
-                $url = \yii\helpers\Url::toRoute([
-                    'parsing/plot',
-                    'PlotCreation[date_from]' => $plot[0]['a'],
-                    'PlotCreation[date_to]' => $plot[0]['b'],
-                    'PlotCreation[interval_quantity]' => 60,
-                ]);
+                $diff = strtotime($plot[0]['b']) - strtotime($plot[0]['a']);
+                $diff = $diff / 48;
+                if (empty($plot[0]['a']) === false || empty($plot[0]['b']) === false) {
+                    $url = \yii\helpers\Url::toRoute([
+                        'parsing/plot',
+                        'PlotCreation[date_from]' => $plot[0]['a'],
+                        'PlotCreation[date_to]' => $plot[0]['b'],
+                        'PlotCreation[interval_quantity]' => ceil($diff),
+                    ]);
+                } else
+                    $url = \yii\helpers\Url::to([
+                        'parsing/plotfromhistory'
+                    ]);
                 return Html::a('<span class="glyphicon glyphicon-share-alt"></span>', $url,
                     [
                         'title' => 'Перейти',
