@@ -7,6 +7,7 @@
  * @var array $plot4 app\controllers\ParsingController
  * @var array $plot5 app\controllers\ParsingController
  * @var array $plot6 app\controllers\ParsingController
+ * @var array $plot7 app\controllers\ParsingController
  * @var app\models\PlotCreation $plotCreation
  */
 
@@ -274,27 +275,7 @@ $this->title = 'Plots';
     ]);
 
     $provider = new SqlDataProvider([
-        'sql' => 'WITH external AS (
-                  SELECT url_query, 
-                         max(query_time_numeric) over wind, 
-                         avg(query_time_numeric) over wind, 
-                         min(query_time_numeric) over wind, 
-                         query_date logs, 
-                         query_time_numeric, 
-                         CASE WHEN max(query_time_numeric) over wind = query_time_numeric then query_date end maxt, 
-                         CASE WHEN min(query_time_numeric) over wind = query_time_numeric then query_date end mint 
-                  FROM logs WHERE query_date BETWEEN :date_from AND :date_to
-                  WINDOW wind as (partition by url_query)
-                                    )
-                  SELECT DISTINCT 
-                         url_query URL, 
-                         max Максимальное_время, 
-                         round(avg, 3) Среднее_время, 
-                         min Минимальное_время, 
-                         max(maxt) over (partition by url_query) Время_максимального_запроса, 
-                         min(mint) over (partition by url_query) Время_минимального_запроса 
-                  FROM external
-                  ORDER BY Максимальное_время DESC',
+        'sql' => $plot7,
         'params' => [':date_from' => $plotCreation->date_from, ':date_to' => $plotCreation->date_to],
         'totalCount' => 20,
     ]);

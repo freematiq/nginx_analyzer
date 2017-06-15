@@ -91,6 +91,7 @@ class ParsingController extends Controller
         $plot4 = $plotCreation->groupbyurl();
         $plot5 = $plotCreation->groupbycode();
         $plot6 = $plotCreation->groupbytime();
+        $plot7 = $plotCreation->longestquery();
 
         return $this->render('plot', [
             'plotCreation' => $plotCreation,
@@ -100,6 +101,7 @@ class ParsingController extends Controller
             'plot4' => $plot4,
             'plot5' => $plot5,
             'plot6' => $plot6,
+            'plot7' => $plot7,
         ]);
     }
 

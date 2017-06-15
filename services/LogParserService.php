@@ -16,8 +16,7 @@ use Yii;
 class LogParserService
 {
     /**
-     * This method imports data from file into array $rows deleting
-     * empty last cell of array
+     * This method imports data from file into array $rows
      *
      * @param string $path file for parsing
      * @return array array with every string in private cell
@@ -100,9 +99,11 @@ class LogParserService
             /*
              * разбор файла по строкам
              */
+            $collector = [];
             foreach ($rows as $row => $data) {
-                $this->fillingTables($data, $uploadedfile->filename_id);
+                $collector[] = $this->fillingTables($data, $uploadedfile->filename_id);
             }
+            $this->saver($collector);
             $transaction->commit();
         } catch (\Throwable $exception) {
             $transaction->rollBack();
@@ -116,7 +117,7 @@ class LogParserService
      *
      * @param string $data rows of parsing file
      * @param int $file_id filename_id from table upload_history
-     * @return int returns 0 if succeeded
+     * @return array
      */
     public function fillingTables($data, $file_id)
     {
@@ -185,10 +186,12 @@ class LogParserService
          * query_type, browser_info приходящие идентификаторы внешних ключей.
          * file_id - идентификатор внешнего ключа загружаемого файла - входящее значение функции.
          */
+        //$data=[];
         $logs = new Logs();
         $logs->query_type = $types->query_type_id;
         $logs->sip = $v_sip;
         $logs->query_date = $v_query_date;
+        //$data[]=[$types->query_type_id, $v_sip, $v_query_date, $v_query_code, $v_query_size, $v_query_time, $v_query_time, $file_id, $useragent->user_agent_id];
         /*
          * если в строке не было типа запроса, то присваиваем полю query_type id строки с EMPTY,
          * а в url_query оставляем null.
@@ -231,6 +234,8 @@ class LogParserService
          * то при наличии запятой между адресами первый адрес записываем в поле user_ip,
          * а второй адрес в резервный столбец user_ip_reserve.
          */
+        $logs->uploaded_file = $file_id;
+        $logs->browser_info = $useragent->user_agent_id;
         if (str_replace('"', '', $v_user_ip) != "-") {
             if (substr_count($v_user_ip, ',') === 0) {
                 $logs->user_ip = str_replace('"', '', $v_user_ip);
@@ -243,9 +248,40 @@ class LogParserService
         } elseif (str_replace('"', '', $v_user_ip) === "-") {
             $logs->user_ip = $v_sip;
         }
-        $logs->uploaded_file = $file_id;
-        $logs->browser_info = $useragent->user_agent_id;
-        $logs->save();
+        return [
+            $logs->sip,
+            $logs->query_date,
+            $logs->query_type,
+            $logs->url_query,
+            $logs->query_code,
+            $logs->query_size,
+            $logs->quested_page,
+            $logs->browser_info,
+            $logs->user_ip,
+            $logs->uploaded_file,
+            $logs->query_time_float,
+            $logs->query_time_numeric,
+            $logs->user_ip_reserve
+        ];
+    }
+
+    private function saver($collector)
+    {
+        Yii::$app->db->createCommand()->batchInsert(Logs::tableName(), [
+            'sip',
+            'query_date',
+            'query_type',
+            'url_query',
+            'query_code',
+            'query_size',
+            'quested_page',
+            'browser_info',
+            'user_ip',
+            'uploaded_file',
+            'query_time_float',
+            'query_time_numeric',
+            'user_ip_reserve'
+        ], $collector)->execute();
         return 0;
     }
 }

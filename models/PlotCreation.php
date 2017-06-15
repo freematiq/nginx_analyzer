@@ -4,7 +4,6 @@ namespace app\models;
 
 use Yii;
 use yii\base\Model;
-use yii\data\SqlDataProvider;
 
 class PlotCreation extends Model
 {
@@ -21,6 +20,11 @@ class PlotCreation extends Model
         ];
     }
 
+    /**
+     * Данный метод содержит запрос, который считает количество запросов в каждом интервале за промежуток времени.
+     * :date_from - начальное время, :date_to - конечное время, :quantity - шаг деления интервала, измеряется в секундах.
+     * @return array $plot
+     */
     public function creation()
     {
         $plot = Yii::$app->db->createCommand(
@@ -44,6 +48,11 @@ class PlotCreation extends Model
         return $plot;
     }
 
+    /**
+     * Данный метод содержит запрос, который считает среднее время выполнения запросов в каждом интервале за промежуток времени.
+     * :date_from - начальное время, :date_to - конечное время, :quantity - шаг деления интервала, измеряется в секундах.
+     * @return array $plot
+     */
     public function average()
     {
         $plot = Yii::$app->db->createCommand(
@@ -67,6 +76,10 @@ class PlotCreation extends Model
         return $plot;
     }
 
+    /**
+     * Данный метод содержит запрос, который получает Top 20 ip, с которых было больше всего запросов
+     * @return array $plot
+     */
     public function groupbysip()
     {
         $plot = Yii::$app->db->createCommand(
@@ -82,6 +95,10 @@ class PlotCreation extends Model
         return $plot;
     }
 
+    /**
+     * Данный метод содержит запрос, который получает количество запросов с определеным кодом запроса
+     * @return array $plot
+     */
     public function groupbycode()
     {
         $plot = Yii::$app->db->createCommand(
@@ -97,6 +114,10 @@ class PlotCreation extends Model
         return $plot;
     }
 
+    /**
+     * Данный метод содержит запрос, который получает Top 20 url, которые чаще всего обрабатываются
+     * @return array $plot
+     */
     public function groupbyurl()
     {
         $plot = Yii::$app->db->createCommand(
@@ -112,6 +133,10 @@ class PlotCreation extends Model
         return $plot;
     }
 
+    /**
+     * Данный метод содержит запрос, который получает общее время выполнения запросов с url в секундах (20 самых долгих)
+     * @return array $plot
+     */
     public function groupbytime()
     {
         $plot = Yii::$app->db->createCommand(
@@ -127,18 +152,39 @@ class PlotCreation extends Model
         return $plot;
     }
 
+    /**
+     * Данный метод содержит запрос, который получает время выполнения запросов в секундах (20 самых долгих)
+     * @return string $provider
+     */
     public function longestquery()
     {
-        $provider = new SqlDataProvider([
-            'sql' => 'SELECT url_query URL, 
-                             query_time_numeric Время_выполнения, 
-                             query_date Дата_запроса 
-                      FROM logs 
-                      WHERE query_date BETWEEN :date_from AND :date_to
-                      ORDER BY query_time_numeric DESC',
-            'totalCount' => 20,
-        ]);
+        $provider = 'WITH external AS (
+                  SELECT url_query, 
+                         max(query_time_numeric) over wind, 
+                         avg(query_time_numeric) over wind, 
+                         min(query_time_numeric) over wind, 
+                         query_date logs, 
+                         query_time_numeric, 
+                         CASE WHEN max(query_time_numeric) over wind = query_time_numeric then query_date end maxt, 
+                         CASE WHEN min(query_time_numeric) over wind = query_time_numeric then query_date end mint 
+                  FROM logs WHERE query_date BETWEEN :date_from AND :date_to
+                  WINDOW wind as (partition by url_query)
+                                    )
+                  SELECT DISTINCT 
+                         url_query URL, 
+                         max Максимальное_время, 
+                         round(avg, 3) Среднее_время, 
+                         min Минимальное_время, 
+                         max(maxt) over (partition by url_query) Время_максимального_запроса, 
+                         min(mint) over (partition by url_query) Время_минимального_запроса 
+                  FROM external
+                  ORDER BY Максимальное_время DESC';
         return $provider;
+    }
+
+    public function providetime()
+    {
+        return 0;
     }
 }
 
