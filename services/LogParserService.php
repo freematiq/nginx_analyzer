@@ -28,6 +28,7 @@ class LogParserService
          * оставшиеся строки записывваем в массив.
          */
         $file = file_get_contents($path);
+        echo "Я загрузил файл и потратил: ". memory_get_usage($real_usage = true) . "\n";
         $file = trim(preg_replace('/[\r\n]+/m', "\n", $file));
         $rows = explode("\n", $file);
         return $rows;
@@ -103,6 +104,7 @@ class LogParserService
             foreach ($rows as $row => $data) {
                 $collector[] = $this->fillingTables($data, $uploadedfile->filename_id);
             }
+            echo "Я заполнил массив и потратил на это: " . memory_get_usage($real_usage = true) . "\n";
             $this->saver($collector);
             $transaction->commit();
         } catch (\Throwable $exception) {
