@@ -267,12 +267,10 @@ $this->title = 'Plots';
                       FROM logs
                       WHERE query_date BETWEEN :date_from AND :date_to AND query_code!=200
                       GROUP BY url_query, query_code 
-                      ORDER BY Количество DESC',
+                      ORDER BY Код_запроса DESC, Количество DESC',
         'params' => [':date_from' => $plotCreation->date_from, ':date_to' => $plotCreation->date_to],
         'totalCount' => $total,
-        'pagination' => [
-            'pageSize' => 10,
-        ]
+        'pagination' => [ 'pageSize' => 100 ],
     ]);
 
     $provider = new SqlDataProvider([
@@ -308,13 +306,12 @@ $this->title = 'Plots';
     </div>
 
     <?php
-    Pjax::begin();
     echo GridView::widget([
         'summary' => false,
         'dataProvider' => $provider,
         'captionOptions' => ['class' => 'h4 text-center text-info'],
     ]);
-    Pjax::end();
+
     ?>
 
     <div class="container container-table">
@@ -324,12 +321,25 @@ $this->title = 'Plots';
     </div>
 
     <?php
-    Pjax::begin();
+    Pjax::begin(['timeout' => 8000]);
+
     echo GridView::widget([
         'summary' => false,
         'dataProvider' => $url_provider,
         'captionOptions' => ['class' => 'h4 text-center text-info'],
         'emptyText' => 'Все с кодом 200',
+        'columns' => [
+            ['class' => 'yii\grid\SerialColumn'],
+            ['attribute' => 'Код_запроса',
+                'label' => 'Код запроса',
+                'format' => 'raw',],
+            ['attribute' => 'Адрес_запроса',
+                'label' => 'Адрес запроса',
+                'format' => 'raw',],
+            ['attribute' => 'Количество',
+                'label' => 'Количество',
+                'format' => 'raw',],
+            ],
     ]);
     Pjax::end();
     ?>
