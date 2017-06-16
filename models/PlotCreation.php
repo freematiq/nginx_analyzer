@@ -144,8 +144,8 @@ class PlotCreation extends Model
                  FROM logs
                  WHERE query_date BETWEEN :date_from AND :date_to
                  GROUP BY url_query 
-                 ORDER BY queries
-                 DESC LIMIT 20', [
+                 ORDER BY queries  
+                 DESC NULLS LAST LIMIT 20', [
             'date_from' => $this->date_from,
             'date_to' => $this->date_to
         ])->queryAll();
@@ -171,14 +171,14 @@ class PlotCreation extends Model
                   WINDOW wind as (partition by url_query)
                                     )
                   SELECT DISTINCT 
-                         url_query URL, 
+                         url_query, 
                          max Максимальное_время, 
                          round(avg, 3) Среднее_время, 
                          min Минимальное_время, 
                          max(maxt) over (partition by url_query) Время_максимального_запроса, 
                          min(mint) over (partition by url_query) Время_минимального_запроса 
                   FROM external
-                  ORDER BY Максимальное_время DESC';
+                  ORDER BY Максимальное_время DESC NULLS LAST';
         return $provider;
     }
 

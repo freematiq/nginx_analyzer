@@ -61,6 +61,7 @@ echo GridView::widget([
                 WHERE uploaded_file = :filename_id', ['filename_id' => $plotCreation['filename_id']])->queryAll();
                 $diff = strtotime($plot[0]['b']) - strtotime($plot[0]['a']);
                 $diff = $diff / 48;
+                if ($diff===0) {$diff=1;}
                 if (empty($plot[0]['a']) === false || empty($plot[0]['b']) === false) {
                     $url = \yii\helpers\Url::toRoute([
                         'parsing/plot',

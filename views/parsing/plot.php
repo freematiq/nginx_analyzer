@@ -291,6 +291,27 @@ $this->title = 'Plots';
         'summary' => false,
         'dataProvider' => $provider,
         'captionOptions' => ['class' => 'h4 text-center text-info'],
+        'columns' => [
+            ['class' => 'yii\grid\SerialColumn'],
+            ['attribute' => 'url_query',
+                'label' => 'URL',
+                'format' => 'raw',],
+            ['attribute' => 'Максимальное_время',
+                'label' => 'Максимальное время',
+                'format' => 'raw',],
+            ['attribute' => 'Среднее_время',
+                'label' => 'Среднее время',
+                'format' => 'raw',],
+            ['attribute' => 'Минимальное_время',
+                'label' => 'Минимальное время',
+                'format' => 'raw',],
+            ['attribute' => 'Время_максимального_запроса',
+                'label' => 'Время максимального запроса',
+                'format' => 'raw',],
+            ['attribute' => 'Время_минимального_запроса',
+                'label' => 'Время минимального запроса',
+                'format' => 'raw',],
+        ],
     ]);
 
     ?>
