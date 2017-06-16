@@ -113,13 +113,17 @@ class LogParserService
                 if (is_numeric($row_data[0][8]) === true) {
                     list($v_sip, $v_query_date, $v_query_type_with_url_query, $v_query_code, $v_query_size, $v_query_time, $v_quested_page, $v_browser_info, $v_user_ip) = $this->variableRewriterCaseOne($row_data_edited, $row_data);
                     $collector[] = $this->dataCollector($v_sip, $v_query_date, $v_query_type_with_url_query, $v_query_code, $v_query_size, $v_query_time, $v_quested_page, $v_browser_info, $v_user_ip, $uploadedfile->filename_id);
+                    $this->dataSaver($collector);
+                    $collector = [];
                 } else {
                     list($v_sip, $v_query_date, $v_query_type_with_url_query, $v_query_code, $v_query_size, $v_query_time, $v_quested_page, $v_browser_info, $v_user_ip) = $this->variableRewriterCaseTwo($row_data_edited, $row_data);
                     $collector[] = $this->dataCollector($v_sip, $v_query_date, $v_query_type_with_url_query, $v_query_code, $v_query_size, $v_query_time, $v_quested_page, $v_browser_info, $v_user_ip, $uploadedfile->filename_id);
+                    $this->dataSaver($collector);
+                    $collector = [];
                 }
             }
             echo "Я заполнил массив и потратил на это: " . round(memory_get_usage($real_usage = true) / 1000000, 3) . " МБ" . "\n";
-            $this->dataSaver($collector);
+
             $transaction->commit();
         } catch (\Throwable $exception) {
             $transaction->rollBack();
