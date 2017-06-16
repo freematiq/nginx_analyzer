@@ -20,13 +20,13 @@ If you work with command line wait for message "Успешно загружен�
 
 After successful parsing you can analyze uploaded data. Choose tab "График из файла", find the raw with file you want and press link in the last column. You will be automatically redirected to tab "Графики" with next parameters: minimum and maximum dates that is contained in file and step which counts as difference between maximum and minimum dates divided to 48 parts.
 
-_Be careful. Large time gaps could contain data from anoter files because there is no filtering by file, application uses only time gaps._
+_Be careful. Large time gaps could contain data from another files because there is no filtering by file, application uses only time gaps._
 
 For your own selection you can use tab "Графики" directly. Choose time period you want and interval which actually is the step of fragmentation. Interval measures in seconds (60 means one minute, 120 means two minutes and so on). For example, if you choose period in one day you can split it by hours using 3600 as interval value.
 
 _Be careful! If you choose a 1 year period and set interval step as 1 hour you risk to not get results._
 
-After successful choosing of period and step you can analyze yuor data on 5 charts and 2 tables.
+After successful choosing of period and step you can analyze your data on 5 charts and 2 tables.
 
 ##### Chart 1
 
