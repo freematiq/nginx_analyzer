@@ -52,7 +52,7 @@ class Logs extends \yii\db\ActiveRecord
             [['query_date', 'created_at'], 'safe'],
             [['query_type', 'query_code', 'query_size', 'browser_info', 'uploaded_file'], 'integer'],
             [['query_time_float', 'query_time_numeric'], 'number'],
-            [['url_query'], 'string', 'max' => 128],
+            [['url_query'], 'string', 'max' => 512],
             [['quested_page'], 'string', 'max' => 256],
             [['query_type'], 'exist', 'skipOnError' => true, 'targetClass' => QueryTypes::className(), 'targetAttribute' => ['query_type' => 'query_type_id']],
             [['uploaded_file'], 'exist', 'skipOnError' => true, 'targetClass' => UploadHistory::className(), 'targetAttribute' => ['uploaded_file' => 'filename_id']],

@@ -12,7 +12,7 @@ class m170522_060303_create_logs_table extends Migration
             'sip' => 'cidr',
             'query_date' => 'timestamp with time zone',
             'query_type' => 'integer',
-            'url_query' => 'varchar(128)',
+            'url_query' => 'varchar(512)',
             'query_code' => 'integer',
             'query_size' => 'integer',
             'query_time_numeric' => 'NUMERIC(19,3)',
