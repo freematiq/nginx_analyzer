@@ -60,15 +60,25 @@ class LogParserService
             $collector = [];
             foreach ($rows as $row => $data) {
                 list ($row_data_edited, $row_data) = $this->dataPreparer($data);
-                if (is_numeric($row_data[0][8]) === true) {
+                if ((is_numeric($row_data[0][8]) === true) && (empty($row_data[0][11]) === false)) {
                     list($v_sip, $v_query_date, $v_query_type_with_url_query, $v_query_code, $v_query_size, $v_query_time, $v_quested_page, $v_browser_info, $v_user_ip) = $this->variableRewriterCaseOne($row_data_edited, $row_data);
                     $collector[] = $this->dataCollector($v_sip, $v_query_date, $v_query_type_with_url_query, $v_query_code, $v_query_size, $v_query_time, $v_quested_page, $v_browser_info, $v_user_ip, $file_id);
-                } else {
+                    $this->dataSaver($collector);
+                    $collector=[];
+                }
+                if ((is_numeric($row_data[0][8]) === true) && (empty($row_data[0][11]) === true)) {
+                    list($v_sip, $v_query_date, $v_query_type_with_url_query, $v_query_code, $v_query_size, $v_query_time, $v_quested_page, $v_browser_info, $v_user_ip) = $this->variableRewriterCaseThree($row_data_edited, $row_data);
+                    $collector[] = $this->dataCollector($v_sip, $v_query_date, $v_query_type_with_url_query, $v_query_code, $v_query_size, $v_query_time, $v_quested_page, $v_browser_info, $v_user_ip, $file_id);
+                    $this->dataSaver($collector);
+                    $collector=[];
+                }
+                if (is_numeric($row_data[0][8]) === false) {
                     list($v_sip, $v_query_date, $v_query_type_with_url_query, $v_query_code, $v_query_size, $v_query_time, $v_quested_page, $v_browser_info, $v_user_ip) = $this->variableRewriterCaseTwo($row_data_edited, $row_data);
                     $collector[] = $this->dataCollector($v_sip, $v_query_date, $v_query_type_with_url_query, $v_query_code, $v_query_size, $v_query_time, $v_quested_page, $v_browser_info, $v_user_ip, $file_id);
+                    $this->dataSaver($collector);
+                    $collector=[];
                 }
             }
-            $this->dataSaver($collector);
             $transaction->commit();
         } catch (\Throwable $exception) {
             $transaction->rollBack();
@@ -108,22 +118,33 @@ class LogParserService
              * каждая отработанная строка записывается в накопитель, который после того, как строки в файле кончатся, уйдет на запись в БД.
              */
             $collector = [];
+            $counter=0;
             foreach ($rows as $row => $data) {
                 list ($row_data_edited, $row_data) = $this->dataPreparer($data);
-                if (is_numeric($row_data[0][8]) === true) {
+                if ((is_numeric($row_data[0][8]) === true) && (empty($row_data[0][11]) === false)) {
                     list($v_sip, $v_query_date, $v_query_type_with_url_query, $v_query_code, $v_query_size, $v_query_time, $v_quested_page, $v_browser_info, $v_user_ip) = $this->variableRewriterCaseOne($row_data_edited, $row_data);
                     $collector[] = $this->dataCollector($v_sip, $v_query_date, $v_query_type_with_url_query, $v_query_code, $v_query_size, $v_query_time, $v_quested_page, $v_browser_info, $v_user_ip, $uploadedfile->filename_id);
                     $this->dataSaver($collector);
-                    $collector = [];
-                } else {
+                    $collector=[];
+                    $counter++;
+                }
+                if ((is_numeric($row_data[0][8]) === true) && (empty($row_data[0][11]) === true)) {
+                    list($v_sip, $v_query_date, $v_query_type_with_url_query, $v_query_code, $v_query_size, $v_query_time, $v_quested_page, $v_browser_info, $v_user_ip) = $this->variableRewriterCaseThree($row_data_edited, $row_data);
+                    $collector[] = $this->dataCollector($v_sip, $v_query_date, $v_query_type_with_url_query, $v_query_code, $v_query_size, $v_query_time, $v_quested_page, $v_browser_info, $v_user_ip, $uploadedfile->filename_id);
+                    $this->dataSaver($collector);
+                    $collector=[];
+                    $counter++;
+                }
+                if (is_numeric($row_data[0][8]) === false) {
                     list($v_sip, $v_query_date, $v_query_type_with_url_query, $v_query_code, $v_query_size, $v_query_time, $v_quested_page, $v_browser_info, $v_user_ip) = $this->variableRewriterCaseTwo($row_data_edited, $row_data);
                     $collector[] = $this->dataCollector($v_sip, $v_query_date, $v_query_type_with_url_query, $v_query_code, $v_query_size, $v_query_time, $v_quested_page, $v_browser_info, $v_user_ip, $uploadedfile->filename_id);
                     $this->dataSaver($collector);
-                    $collector = [];
+                    $collector=[];
+                    $counter++;
                 }
             }
             echo "Я заполнил массив и потратил на это: " . round(memory_get_usage($real_usage = true) / 1000000, 3) . " МБ" . "\n";
-
+            echo "Я обработал " . $counter . " строк" . "\n";
             $transaction->commit();
         } catch (\Throwable $exception) {
             $transaction->rollBack();
@@ -193,8 +214,10 @@ class LogParserService
             $v_sip,
             $v_query_date,
             $v_query_type_with_url_query,
-            $v_query_code, $v_query_size,
-            $v_query_time, $v_quested_page,
+            $v_query_code,
+            $v_query_size,
+            $v_query_time,
+            $v_quested_page,
             $v_browser_info,
             $v_user_ip
         ];
@@ -233,7 +256,43 @@ class LogParserService
             $v_query_time,
             $v_quested_page,
             $v_browser_info,
-            $v_user_ip];
+            $v_user_ip
+        ];
+    }
+
+    /**
+     * This method rewrites variables from prepared arrays in case when time of query exists in incoming data, but user's ip ain't come
+     * @param $row_data_edited array with query_type and url_query
+     * @param $row_data array with another data
+     * @return array array of variables:  server's ip - the date of query - the type of query - the incoming url of query - the code of query - the size of query - the time of query (NULL) - the url of page that was quested - user agents - user's ip
+     */
+    public function variableRewriterCaseThree($row_data_edited, $row_data)
+    {
+        /*
+         * элементам массива с данными присваиваются говорящие имена, которые соответсвуют
+         * названиям столбцов в таблицах, но имеют приставку v_ для лучшей читаемости.
+         * элементы с индексами [0][1], [0][2] всегда не используются. Тип запроса и url вместе из тех соображений,
+         * что бывает, что ни того, ни другого нет.
+         */
+        $v_sip = $row_data[0][0];
+        $v_query_date = str_replace('[', '', $row_data[0][3]) . str_replace(']', '', $row_data[0][4]);
+        $v_query_type_with_url_query = $row_data_edited;
+        $v_query_code = $row_data[0][6];
+        $v_query_size = $row_data[0][7];
+        $v_query_time = $row_data[0][8];
+        $v_quested_page = $row_data[0][9];
+        $v_browser_info = $row_data[0][10];
+        $v_user_ip = $row_data[0][0];
+
+        return [
+            $v_sip,
+            $v_query_date,
+            $v_query_type_with_url_query,
+            $v_query_code, $v_query_size,
+            $v_query_time, $v_quested_page,
+            $v_browser_info,
+            $v_user_ip
+        ];
     }
 
     /**
