@@ -87,7 +87,7 @@ class ParsingController extends Controller
         }
         $plot1 = $plotCreation->creation();
         $plot2 = $plotCreation->average();
-        $plot3 = $plotCreation->groupbysip();
+        $plot3 = $plotCreation->groupbyuserip();
         $plot4 = $plotCreation->groupbyurl();
         $plot5 = $plotCreation->groupbycode();
         $plot6 = $plotCreation->groupbytime();
