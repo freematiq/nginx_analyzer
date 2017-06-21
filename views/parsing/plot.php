@@ -67,7 +67,7 @@ $this->title = 'Plots';
     $arrX2 = array_merge(['x'], $interval2);
     $arrY2 = array_merge(['среднее время выполнения запроса'], $quantity2);
     $queries = ArrayHelper::getColumn($plot3, 'queries');
-    $sip = ArrayHelper::getColumn($plot3, 'sip');
+    $sip = ArrayHelper::getColumn($plot3, 'user_ip');
     $arrX3 = array_merge(['x1'], $sip);
     $arrY3 = array_merge(['количество запросов с ip'], $queries);
     $queries2 = ArrayHelper::getColumn($plot4, 'queries');
@@ -112,7 +112,7 @@ $this->title = 'Plots';
                     ],
                     'y' => [
                         'label' => ['text' => 'Количество запросов || секунды', 'position' => 'outer-middle'],
-                    ]
+                    ],
                 ]
             ]
     ]);
@@ -139,6 +139,7 @@ $this->title = 'Plots';
                 'axis' => [
                     'rotated' => true,
                     'x' => [
+                        'tick' => ['width' => 120],
                         'show' => true,
                         'type' => 'category'
                         ,],
@@ -192,7 +193,7 @@ $this->title = 'Plots';
     echo Chart::widget([
         'options' => ['id' => 'url'],
         'clientOptions' =>
-            ['size' => ['height' => 730],
+            ['size' => ['height' => 400],
                 'data' => [
                     'x' => 'x2',
                     'columns' => [$arrX4, $arrY4],
@@ -204,6 +205,7 @@ $this->title = 'Plots';
                 'axis' => [
                     'rotated' => true,
                     'x' => [
+                        'tick' => ['width' => 270],
                         'show' => true,
                         'type' => 'category',
                         'label' => ['text' => 'URL', 'position' => 'outer-middle']
@@ -226,7 +228,7 @@ $this->title = 'Plots';
     echo Chart::widget([
         'options' => ['id' => 'time'],
         'clientOptions' =>
-            ['size' => ['height' => 730],
+            ['size' => ['height' => 400],
                 'data' => [
                     'x' => 'x4',
                     'columns' => [$arrX6, $arrY6],
@@ -237,6 +239,7 @@ $this->title = 'Plots';
                 'axis' => [
                     'rotated' => true,
                     'x' => [
+                        'tick' => ['width' => 270],
                         'show' => true,
                         'type' => 'category',
                         'label' => ['text' => 'URL', 'position' => 'outer-middle']
@@ -271,7 +274,7 @@ $this->title = 'Plots';
                       ORDER BY Код_запроса DESC, Количество DESC',
         'params' => [':date_from' => $plotCreation->date_from, ':date_to' => $plotCreation->date_to],
         'totalCount' => $total,
-        'pagination' => [ 'pageSize' => 100 ],
+        'pagination' => ['pageSize' => 100],
     ]);
 
     $provider = new SqlDataProvider([
@@ -341,7 +344,7 @@ $this->title = 'Plots';
             ['attribute' => 'Количество',
                 'label' => 'Количество',
                 'format' => 'raw',],
-            ],
+        ],
     ]);
     Pjax::end();
     ?>

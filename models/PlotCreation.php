@@ -80,13 +80,13 @@ class PlotCreation extends Model
      * Данный метод содержит запрос, который получает Top 20 ip, с которых было больше всего запросов
      * @return array $plot
      */
-    public function groupbysip()
+    public function groupbyuserip()
     {
         $plot = Yii::$app->db->createCommand(
-            'SELECT sip::INET, count(*) queries 
+            'SELECT user_ip::INET, count(*) queries 
                  FROM LOGS 
                  WHERE query_date BETWEEN :date_from AND :date_to 
-                 GROUP BY sip 
+                 GROUP BY user_ip 
                  ORDER BY queries 
                  DESC LIMIT 20', [
             'date_from' => $this->date_from,
