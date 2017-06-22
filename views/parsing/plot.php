@@ -8,6 +8,7 @@
  * @var array $plot5 app\controllers\ParsingController
  * @var array $plot6 app\controllers\ParsingController
  * @var array $plot7 app\controllers\ParsingController
+ * @var array $plot8 app\controllers\ParsingController
  * @var app\models\PlotCreation $plotCreation
  */
 
@@ -22,8 +23,8 @@ use yii\widgets\Pjax;
 use yii2mod\c3\chart\Chart;
 
 $this->title = 'Plots';
-?>
 
+?>
 <div class="site-index">
 
     <div class="jumbotron">
@@ -54,7 +55,7 @@ $this->title = 'Plots';
     <?= $form->field($plotCreation, 'interval_quantity')->label('Шаг разбиения (60 = 1 минута, 3600 = 1 час, 86400 = 1 день)') ?>
 
     <div class="form-group">
-        <?= Html::submitButton('Показать', ['class' => 'btn btn-info']) ?>
+        <?= Html::submitButton('Показать', ['class' => 'btn btn-info js__tester']) ?>
     </div>
     <?php ActiveForm::end();
 
@@ -82,6 +83,10 @@ $this->title = 'Plots';
     $url_query2 = ArrayHelper::getColumn($plot6, 'url_query');
     $arrX6 = array_merge(['x4'], $url_query2);
     $arrY6 = array_merge(['общее время запросов с url'], $queries4);
+    $interval3 = ArrayHelper::getColumn($plot8, 'interval');
+    $quantity3 = ArrayHelper::getColumn($plot8, 'quantity');
+    $arrX7 = array_merge(['суммарное время выполнения запросов'], $quantity3);
+    $arrY7 = array_merge(['x5'], $interval3);
 
     ?>
     <div class="container container-table">
@@ -118,6 +123,42 @@ $this->title = 'Plots';
     ]);
 
     ?>
+
+    <div class="container container-table">
+        <h2>
+            <p class="text-center">Суммарное время выполнения запросов по периодам</p>
+        </h2>
+    </div>
+
+    <?php
+    echo Chart::widget([
+        'options' => ['id' => 'sumtime'],
+        'clientOptions' =>
+            ['data' => [
+                'x' => 'x5',
+                'xFormat' => '%Y',
+                'columns' => [$arrX7, $arrY7],
+                'colors' => ['суммарное время выполнения запросов' => '#964604'],
+                'type' => 'area-spline',
+                'label' => true,
+            ],
+                'axis' => [
+                    'x' => [
+                        'show' => false,
+                        'label' => 'Промежутки времени',
+                        'type' => 'category',
+                        'localtime' => false,
+                        'tick' => [['format' => '%Y-%m-%d %H:%M:%S.%'],],
+                    ],
+                    'y' => [
+                        'label' => ['text' => 'минуты', 'position' => 'outer-middle'],
+                    ],
+                ]
+            ]
+    ]);
+
+    ?>
+
     <div class="container container-table">
         <h2>
             <p class="text-center">Top 20 ip, с которых было больше всего запросов</p>

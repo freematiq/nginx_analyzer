@@ -49,6 +49,34 @@ class PlotCreation extends Model
     }
 
     /**
+     * Данный метод содержит запрос, который считает суммарное время запросов в каждом интервале за промежуток времени.
+     * :date_from - начальное время, :date_to - конечное время, :quantity - шаг деления интервала, измеряется в секундах.
+     * @return array $plot
+     */
+    public function sumtime()
+    {
+        $plot = Yii::$app->db->createCommand(
+            'with external as (
+                                  with interior as (
+                                                    select range 
+                                                    from generate_series(:date_from,:date_to,:quantity::interval) range
+                                                    )
+                                  select range as interval, lead(range) over (order by range) upperbound
+                                  from interior
+                                  )
+                 select sum(query_time_numeric)/60 quantity, external.interval
+                 from external
+                 left outer join logs on logs.query_date >= interval and logs.query_date < upperbound
+                 group by external.interval 
+                 order by external.interval', [
+            'quantity' => $this->interval_quantity,
+            'date_from' => $this->date_from,
+            'date_to' => $this->date_to
+        ])->queryAll();
+        return $plot;
+    }
+
+    /**
      * Данный метод содержит запрос, который считает среднее время выполнения запросов в каждом интервале за промежуток времени.
      * :date_from - начальное время, :date_to - конечное время, :quantity - шаг деления интервала, измеряется в секундах.
      * @return array $plot
