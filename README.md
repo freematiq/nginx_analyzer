@@ -1,16 +1,14 @@
 # nginx analyzer
 
 This application works with nginx logs. Two formats of incoming data are available:
-1) server's ip - the date of query - the type of query - the incoming url of query - the code of query - the size of query - the time of query - the url of page that was quested - user agents - user's ip
-2) The same as first but without the time of query
+1) Default nginx access.log format
+2) log_format timed_combined '$remote_addr - $remote_user [$time_local] "$request" $status $body_bytes_sent $request_time "$http_referer" "$http_user_agent"'
 
 _Before starting be sure that your data in format 1 or 2!_
 
 To start parsing you can use command line. Choose folder with this application and use command bellow
 
 `php yii parse/parse <filename>`
-
-_File should be in the root folder of the project_
 
 Also you can use browser interface for parsing. Choose section "Парсер логов". In this case you can take file from anywhere on your PC.
 

@@ -116,7 +116,7 @@ $this->title = 'Plots';
                         'tick' => [['format' => '%Y-%m-%d %H:%M:%S.%'],],
                     ],
                     'y' => [
-                        'label' => ['text' => 'Количество запросов', 'position' => 'outer-middle'],
+                        'label' => ['text' => 'Количество запросов', 'position' => 'outer-middle']            
                     ],
                 ]
             ]
