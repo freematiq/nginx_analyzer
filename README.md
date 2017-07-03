@@ -2,7 +2,7 @@
 
 This application works with nginx logs. Two formats of incoming data are available:
 1) Default nginx access.log format
-2) log_format timed_combined '$remote_addr - $remote_user [$time_local] "$request" $status $body_bytes_sent $request_time "$http_referer" "$http_user_agent"'
+2) log_format timed_combined '$remote_addr - $remote_user [$time_local] "$request" $status $body_bytes_sent $request_time "$http_referer" "$http_user_agent" "$http_x_forwarded_for"'
 
 _Before starting be sure that your data in format 1 or 2!_
 
