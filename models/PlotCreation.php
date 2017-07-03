@@ -49,6 +49,34 @@ class PlotCreation extends Model
     }
 
     /**
+     * Данный метод содержит запрос, который считает суммарное время запросов в каждом интервале за промежуток времени.
+     * :date_from - начальное время, :date_to - конечное время, :quantity - шаг деления интервала, измеряется в секундах.
+     * @return array $plot
+     */
+    public function sumtime()
+    {
+        $plot = Yii::$app->db->createCommand(
+            'with external as (
+                                  with interior as (
+                                                    select range 
+                                                    from generate_series(:date_from,:date_to,:quantity::interval) range
+                                                    )
+                                  select range as interval, lead(range) over (order by range) upperbound
+                                  from interior
+                                  )
+                 select coalesce(sum(query_time_numeric),0) quantity, external.interval
+                 from external
+                 left outer join logs on logs.query_date >= interval and logs.query_date < upperbound
+                 group by external.interval 
+                 order by external.interval', [
+            'quantity' => $this->interval_quantity,
+            'date_from' => $this->date_from,
+            'date_to' => $this->date_to
+        ])->queryAll();
+        return $plot;
+    }
+
+    /**
      * Данный метод содержит запрос, который считает среднее время выполнения запросов в каждом интервале за промежуток времени.
      * :date_from - начальное время, :date_to - конечное время, :quantity - шаг деления интервала, измеряется в секундах.
      * @return array $plot
@@ -166,18 +194,22 @@ class PlotCreation extends Model
                          query_date logs, 
                          query_time_numeric, 
                          CASE WHEN max(query_time_numeric) over wind = query_time_numeric then query_date end maxt, 
-                         CASE WHEN min(query_time_numeric) over wind = query_time_numeric then query_date end mint 
+                         CASE WHEN min(query_time_numeric) over wind = query_time_numeric then query_date end mint,
+                         (COUNT (*) OVER wind) as count
                   FROM logs WHERE query_date BETWEEN :date_from AND :date_to
                   WINDOW wind as (partition by url_query)
                                     )
                   SELECT DISTINCT 
                          url_query, 
                          max Максимальное_время, 
-                         round(avg, 3) Среднее_время, 
+                         round(avg, 3) Среднее_время,
+                        
                          min Минимальное_время, 
                          max(maxt) over (partition by url_query) Время_максимального_запроса, 
-                         min(mint) over (partition by url_query) Время_минимального_запроса 
+                         min(mint) over (partition by url_query) Время_минимального_запроса,
+                         count Всего 
                   FROM external
+                  
                   ORDER BY Максимальное_время DESC NULLS LAST';
         return $provider;
     }

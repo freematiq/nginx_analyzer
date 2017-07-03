@@ -19,8 +19,14 @@ class AppAsset extends AssetBundle
     public $baseUrl = '@web';
     public $css = [
         'css/site.css',
+        'css/tablesort.css',
     ];
     public $js = [
+        'js/tablesort.js',
+        'js/tablesort.min.js',
+        'js/tablesort.date.js',
+        'js/tablesort.number.js',
+        'js/plot.js',
     ];
     public $depends = [
         'yii\web\YiiAsset',

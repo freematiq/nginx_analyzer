@@ -8,6 +8,7 @@
  * @var array $plot5 app\controllers\ParsingController
  * @var array $plot6 app\controllers\ParsingController
  * @var array $plot7 app\controllers\ParsingController
+ * @var array $plot8 app\controllers\ParsingController
  * @var app\models\PlotCreation $plotCreation
  */
 
@@ -22,8 +23,8 @@ use yii\widgets\Pjax;
 use yii2mod\c3\chart\Chart;
 
 $this->title = 'Plots';
-?>
 
+?>
 <div class="site-index">
 
     <div class="jumbotron">
@@ -54,7 +55,7 @@ $this->title = 'Plots';
     <?= $form->field($plotCreation, 'interval_quantity')->label('Шаг разбиения (60 = 1 минута, 3600 = 1 час, 86400 = 1 день)') ?>
 
     <div class="form-group">
-        <?= Html::submitButton('Показать', ['class' => 'btn btn-info']) ?>
+        <?= Html::submitButton('Показать', ['class' => 'btn btn-info js__tester']) ?>
     </div>
     <?php ActiveForm::end();
 
@@ -64,7 +65,7 @@ $this->title = 'Plots';
     $interval2 = ArrayHelper::getColumn($plot2, 'interval');
     $arrY = array_merge(['количество запросов в момент времени'], $quantity);
     $quantity2 = ArrayHelper::getColumn($plot2, 'quantity');
-    $arrX2 = array_merge(['x'], $interval2);
+    $arrX2 = array_merge(['x6'], $interval2);
     $arrY2 = array_merge(['среднее время выполнения запроса'], $quantity2);
     $queries = ArrayHelper::getColumn($plot3, 'queries');
     $sip = ArrayHelper::getColumn($plot3, 'user_ip');
@@ -82,11 +83,15 @@ $this->title = 'Plots';
     $url_query2 = ArrayHelper::getColumn($plot6, 'url_query');
     $arrX6 = array_merge(['x4'], $url_query2);
     $arrY6 = array_merge(['общее время запросов с url'], $queries4);
+    $interval3 = ArrayHelper::getColumn($plot8, 'interval');
+    $quantity3 = ArrayHelper::getColumn($plot8, 'quantity');
+    $arrX7 = array_merge(['суммарное время выполнения запросов'], $quantity3);
+    $arrY7 = array_merge(['x5'], $interval3);
 
     ?>
     <div class="container container-table">
         <h2>
-            <p class="text-center">Количество запросов и их среднее время выполнения в момент времени</p>
+            <p class="text-center">Количество запросов в момент времени</p>
         </h2>
     </div>
 
@@ -97,8 +102,8 @@ $this->title = 'Plots';
             ['data' => [
                 'x' => 'x',
                 'xFormat' => '%Y',
-                'columns' => [$arrX, $arrY, $arrX2, $arrY2,],
-                'colors' => ['среднее время выполнения запроса' => '#385e3e', 'количество запросов в момент времени' => '#513535'],
+                'columns' => [$arrX, $arrY],
+                'colors' => ['количество запросов в момент времени' => '#513535'],
                 'type' => 'area-spline',
                 'label' => true,
             ],
@@ -111,13 +116,84 @@ $this->title = 'Plots';
                         'tick' => [['format' => '%Y-%m-%d %H:%M:%S.%'],],
                     ],
                     'y' => [
-                        'label' => ['text' => 'Количество запросов || секунды', 'position' => 'outer-middle'],
+                        'label' => ['text' => 'Количество запросов', 'position' => 'outer-middle']            
                     ],
                 ]
             ]
     ]);
 
     ?>
+
+    <div class="container container-table">
+        <h2>
+            <p class="text-center">Суммарное время выполнения запросов по периодам</p>
+        </h2>
+    </div>
+
+    <?php
+    echo Chart::widget([
+        'options' => ['id' => 'sumtime'],
+        'clientOptions' =>
+            ['data' => [
+                'x' => 'x5',
+                'xFormat' => '%Y',
+                'columns' => [$arrX7, $arrY7],
+                'colors' => ['суммарное время выполнения запросов' => '#964604'],
+                'type' => 'area-spline',
+                'label' => true,
+            ],
+                'axis' => [
+                    'x' => [
+                        'show' => false,
+                        'label' => 'Промежутки времени',
+                        'type' => 'category',
+                        'localtime' => false,
+                        'tick' => [['format' => '%Y-%m-%d %H:%M:%S.%'],],
+                    ],
+                    'y' => [
+                        'label' => ['text' => 'секунды', 'position' => 'outer-middle'],
+                    ],
+                ]
+            ]
+    ]);
+
+    ?>
+
+    <div class="container container-table">
+        <h2>
+            <p class="text-center">Cреднее время выполнения запросов в момент времени</p>
+        </h2>
+    </div>
+
+    <?php
+    echo Chart::widget([
+        'options' => ['id' => 'avtime'],
+        'clientOptions' =>
+            ['data' => [
+                'x' => 'x6',
+                'xFormat' => '%Y',
+                'columns' => [$arrX2, $arrY2,],
+                'colors' => ['среднее время выполнения запроса' => '#385e3e'],
+                'type' => 'area-spline',
+                'label' => true,
+            ],
+                'axis' => [
+                    'x' => [
+                        'show' => false,
+                        'label' => 'Промежутки времени',
+                        'type' => 'category',
+                        'localtime' => false,
+                        'tick' => [['format' => '%Y-%m-%d %H:%M:%S.%'],],
+                    ],
+                    'y' => [
+                        'label' => ['text' => 'секунды', 'position' => 'outer-middle'],
+                    ],
+                ]
+            ]
+    ]);
+
+    ?>
+
     <div class="container container-table">
         <h2>
             <p class="text-center">Top 20 ip, с которых было больше всего запросов</p>
@@ -291,29 +367,52 @@ $this->title = 'Plots';
 
     <?php
     echo GridView::widget([
+        'options' => ['id' => 'sort'],
         'summary' => false,
         'dataProvider' => $provider,
         'captionOptions' => ['class' => 'h4 text-center text-info'],
+        'tableOptions' => [
+            'class' => 'table table-striped table-bordered', 'id' => 'table-request-time',
+        ],
         'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
+            ['class' => 'yii\grid\SerialColumn',
+                'contentOptions' => ['class' => 'text-center'],
+                'headerOptions' => ['class' => 'text-center'],],
             ['attribute' => 'url_query',
                 'label' => 'URL',
-                'format' => 'raw',],
+                'format' => 'raw',
+                'contentOptions' => ['class' => 'text-center'],
+                'headerOptions' => ['class' => 'text-center'],],
             ['attribute' => 'Максимальное_время',
                 'label' => 'Максимальное время',
-                'format' => 'raw',],
+                'format' => 'raw',
+                'contentOptions' => ['class' => 'text-center'],
+                'headerOptions' => ['class' => 'text-center'],],
             ['attribute' => 'Среднее_время',
-                'label' => 'Среднее время',
-                'format' => 'raw',],
+                'label' => 'Среднее',
+                'format' => 'raw',
+                'contentOptions' => ['class' => 'text-center'],
+                'headerOptions' => ['class' => 'text-center'],],
+            ['attribute' => 'Всего',
+                'label' => 'Всего запросов',
+                'format' => 'raw',
+                'contentOptions' => ['class' => 'text-center'],
+                'headerOptions' => ['class' => 'text-center'],],
             ['attribute' => 'Минимальное_время',
                 'label' => 'Минимальное время',
-                'format' => 'raw',],
+                'format' => 'raw',
+                'contentOptions' => ['class' => 'text-center'],
+                'headerOptions' => ['class' => 'text-center'],],
             ['attribute' => 'Время_максимального_запроса',
                 'label' => 'Время максимального запроса',
-                'format' => 'raw',],
+                'format' => ['date', 'php:Y-m-d H:i:s'],
+                'contentOptions' => ['class' => 'text-center'],
+                'headerOptions' => ['class' => 'text-center'],],
             ['attribute' => 'Время_минимального_запроса',
                 'label' => 'Время минимального запроса',
-                'format' => 'raw',],
+                'format' => ['date', 'php:Y-m-d H:i:s'],
+                'contentOptions' => ['class' => 'text-center'],
+                'headerOptions' => ['class' => 'text-center'],],
         ],
     ]);
 
@@ -334,16 +433,24 @@ $this->title = 'Plots';
         'captionOptions' => ['class' => 'h4 text-center text-info'],
         'emptyText' => 'Все с кодом 200',
         'columns' => [
-            ['class' => 'yii\grid\SerialColumn'],
+            ['class' => 'yii\grid\SerialColumn',
+                'contentOptions' => ['class' => 'text-center'],
+                'headerOptions' => ['class' => 'text-center'],],
             ['attribute' => 'Код_запроса',
                 'label' => 'Код запроса',
-                'format' => 'raw',],
+                'format' => 'raw',
+                'contentOptions' => ['class' => 'text-center'],
+                'headerOptions' => ['class' => 'text-center'],],
             ['attribute' => 'Адрес_запроса',
                 'label' => 'Адрес запроса',
-                'format' => 'raw',],
+                'format' => 'raw',
+                'contentOptions' => ['class' => 'text-center'],
+                'headerOptions' => ['class' => 'text-center'],],
             ['attribute' => 'Количество',
                 'label' => 'Количество',
-                'format' => 'raw',],
+                'format' => 'raw',
+                'contentOptions' => ['class' => 'text-center'],
+                'headerOptions' => ['class' => 'text-center'],],
         ],
     ]);
     Pjax::end();
